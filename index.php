@@ -15,7 +15,7 @@
       exit();
   }
   
-  require PROJECT_ROOT_PATH . "/php-apis/Controller/Api/UserController.php";
+  require PROJECT_ROOT_PATH . "/php-api/Controller/Api/UserController.php";
   
   $objFeedController = new UserController();
   $strMethodName = $uri[4] . 'Action';
