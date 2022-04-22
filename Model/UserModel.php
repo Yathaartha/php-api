@@ -3,7 +3,7 @@
 
   class UserModel extends Database {
     public function getUsers($limit) {
-      return $this->select("SELECT * FROM users ORDER BY user_id ASC LIMIT ?", ["i", $limit]);
+      return $this->select("SELECT * FROM EMP ORDER BY EMPNO");
     }
 
     public function addUser($user_name, $user_mail, $user_status){

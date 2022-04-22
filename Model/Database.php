@@ -7,7 +7,7 @@ class Database
     {
         try {
             // connect oci database
-            $connection = oci_connect(DB_USERNAME, DB_PASSWORD, DB_HOST);
+            $this->connection = oci_connect(DB_USERNAME, DB_PASSWORD, DB_HOST);
          
             if ( oci_error() ) {
                 throw new Exception("Could not connect to database.");   
@@ -21,12 +21,13 @@ class Database
     public function select($query, $params = array())
     {
         try {
-            $stmt = $this->connection->prepare($query);
-            $stmt->execute($params);
-            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt = oci_parse($this->connection, $query);
+            $refcur = oci_new_cursor($this->connection);
+            oci_execute($stmt);
+            oci_fetch_all($stmt, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
             return $result;
         } catch (Exception $e) {
-            throw new Exception($e->getMessage());   
+            throw new Exception($e->getMessage());  
         }
     }
  
@@ -48,10 +49,9 @@ class Database
     public function insert($query, $params = array())
     {
         try {
-            $stmt = $this->connection->prepare($query);
-            $stmt->execute($params);
-            $result = $stmt->rowCount();
-            return $result;
+            $stmt = oci_parse($this->connection, $query);
+            oci_execute($stmt);
+            return true;
         } catch (Exception $e) {
             throw new Exception($e->getMessage());   
         }
