@@ -45,8 +45,8 @@
         public function createAction(){
           $strErrorDesc = '';
           $requestMethod = $_SERVER["REQUEST_METHOD"];
-          $arrQueryStringParams = $this->getQuerystringParams();
-          $arrFormParams = $this->getPayload();
+          // $arrQueryStringParams = $this->getQuerystringParams();
+          $arrFormParams = $this->getFormParams();
 
           if(strtoupper($requestMethod) == 'POST'){
             try{

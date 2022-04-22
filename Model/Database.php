@@ -46,12 +46,37 @@ class Database
     // }
 
     // insert function
-    public function insert($query, $params = array())
+    public function insert($query, $firstname, $lastname, $username, $address, $phone, $email, $password, $image, $status)
     {
         try {
             $stmt = oci_parse($this->connection, $query);
+            oci_bind_by_name($stmt, ':firstname', $firstname);
+            oci_bind_by_name($stmt, ':lastname', $lastname);
+            oci_bind_by_name($stmt, ':username', $username);
+            oci_bind_by_name($stmt, ':address', $address);
+            oci_bind_by_name($stmt, ':phone', $phone);
+            oci_bind_by_name($stmt, ':email', $email);
+            oci_bind_by_name($stmt, ':password', $password);
+            oci_bind_by_name($stmt, ':image', $image);
+            oci_bind_by_name($stmt, ':status', $status);
+
             oci_execute($stmt);
-            return true;
+
+            // create 2d array with all form values
+            $result = array(
+                'firstname' => $firstname,
+                'lastname' => $lastname,
+                'username' => $username,
+                'address' => $address,
+                'phone' => $phone,
+                'email' => $email,
+                'password' => $password,
+                'image' => $image,
+                'status' => $status
+            );
+            
+            
+            return $result;
         } catch (Exception $e) {
             throw new Exception($e->getMessage());   
         }
@@ -78,8 +103,8 @@ class Database
     public function executeStatement($query, $params = array())
     {
         try {
-            $stmt = $this->connection->prepare($query);
-            $stmt->execute($params);
+            $stmt = oci_parse($this->connection, $query);
+            oci_execute($stmt);
             return $stmt;
         } catch (Exception $e) {
             throw new Exception($e->getMessage());   

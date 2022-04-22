@@ -8,7 +8,7 @@
 
     public function addUser($firstname, $lastname, $username, $address, $phone, $email, $password, $image, $status){
       // insert records to users table
-      $this->insert("INSERT INTO customer VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?)", $firstname, $lastname, $username, $address, $phone, $email, $password, $image, $status);
+      return $this->insert("INSERT INTO CUSTOMER VALUES (4, :firstname, :lastname, :username, :address, :phone, :email, :password, :image, :status )", $firstname, $lastname, $username, $address, $phone, $email, $password, $image, $status);
     }
   }
 ?>
