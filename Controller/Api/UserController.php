@@ -51,7 +51,7 @@
           if(strtoupper($requestMethod) == 'POST'){
             try{
               $userModel = new UserModel();
-              $arrUser = $userModel->addUser($arrFormParams['username'], $arrFormParams['user_email'], (int)$arrFormParams['user_status']);
+              $arrUser = $userModel->addUser($arrFormParams['firstname'], $arrFormParams['lastname'], $arrFormParams['username'], $arrFormParams['address'], $arrFormParams['phone'], $arrFormParams['email'], $arrFormParams['password'], $arrFormParams['image'], $arrFormParams['status']);
               $responseData = json_encode($arrUser);
             } catch(Error $e){
               $strErrorDesc = $e->getMessage().'Something went wrong! Please contact supper.';

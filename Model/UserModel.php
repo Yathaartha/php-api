@@ -6,9 +6,9 @@
       return $this->select("SELECT * FROM EMP ORDER BY EMPNO");
     }
 
-    public function addUser($user_name, $user_mail, $user_status){
+    public function addUser($firstname, $lastname, $username, $address, $phone, $email, $password, $image, $status){
       // insert records to users table
-      $this->insert("INSERT INTO users VALUES (NULL, ?, ?, ?)", $user_name, $user_mail, $user_status);
+      $this->insert("INSERT INTO customer VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?)", $firstname, $lastname, $username, $address, $phone, $email, $password, $image, $status);
     }
   }
 ?>
