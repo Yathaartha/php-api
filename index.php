@@ -1,4 +1,6 @@
 <?php
+  session_start();
+
   header('Access-Control-Allow-Origin: *');
   header('Content-Type: application/json');
   header("Access-Control-Allow-Credentials: true");
@@ -10,14 +12,20 @@
   $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
   $uri = explode( '/', $uri );
   
-  if (isset($uri[3]) && $uri[3] != 'user') {
-      header("HTTP/1.1 404 Not Found");
-      exit();
+  if (isset($uri[3]) && $uri[3] == 'user') {    
+    require PROJECT_ROOT_PATH . "/php-api/Controller/Api/UserController.php";
+    
+    $objFeedController = new UserController();
+    $strMethodName = $uri[4] . 'Action';
+    $objFeedController->{$strMethodName}();
+  } elseif(($uri[3]) && $uri[3] == 'product'){
+    require PROJECT_ROOT_PATH . "/php-api/Controller/Api/ProductController.php";
+    $objFeedController = new ProductController();
+    $strMethodName = $uri[4] . 'Action';
+    $objFeedController->{$strMethodName}();
   }
-  
-  require PROJECT_ROOT_PATH . "/php-api/Controller/Api/UserController.php";
-  
-  $objFeedController = new UserController();
-  $strMethodName = $uri[4] . 'Action';
-  $objFeedController->{$strMethodName}();
+  else{
+    header("HTTP/1.1 404 Not Found");
+    exit();
+  }
 ?>

@@ -1,0 +1,17 @@
+{
+    "name": "mahar/php-api",
+    "autoload": {
+        "psr-4": {
+            "Mahar\\PhpApi\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Yathaartha",
+            "email": "maharjanyathaartha017@gmail.com"
+        }
+    ],
+    "require": {
+        "phpmailer/phpmailer": "^6.6"
+    }
+}
