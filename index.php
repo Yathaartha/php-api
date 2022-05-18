@@ -23,6 +23,16 @@
     $objFeedController = new ProductController();
     $strMethodName = $uri[4] . 'Action';
     $objFeedController->{$strMethodName}();
+  }elseif(($uri[3]) && $uri[3] == 'category'){
+    require PROJECT_ROOT_PATH . "/php-api/Controller/Api/CategoryController.php";
+    $objFeedController = new CategoryController();
+    $strMethodName = $uri[4] . 'Action';
+    $objFeedController->{$strMethodName}();
+  }elseif(($uri[3]) && $uri[3] == 'trader'){
+    require PROJECT_ROOT_PATH . "/php-api/Controller/Api/TraderController.php";
+    $objFeedController = new TraderController();
+    $strMethodName = $uri[4] . 'Action';
+    $objFeedController->{$strMethodName}();
   }
   else{
     header("HTTP/1.1 404 Not Found");

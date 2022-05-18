@@ -11,5 +11,11 @@
   require_once PROJECT_ROOT_PATH . "/php-api/Model/UserModel.php";
 
   // include the user model file
+  require_once PROJECT_ROOT_PATH . "/php-api/Model/CategoryModel.php";
+
+  // include the user model file
+  require_once PROJECT_ROOT_PATH . "/php-api/Model/TraderModel.php";
+
+  // include the user model file
   require_once PROJECT_ROOT_PATH . "/php-api/Model/ProductModel.php";
 ?>

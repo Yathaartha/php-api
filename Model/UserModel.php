@@ -2,13 +2,13 @@
   require_once PROJECT_ROOT_PATH . "/php-api/Model/Database.php";
 
   class UserModel extends Database {
-    public function getUsers($limit) {
-      return $this->select("SELECT * FROM CUSTOMER ORDER BY CUSTOMERID");
+    public function addUser($firstname, $lastname, $username, $address, $phone, $email, $password){
+      // insert records to users table
+      return $this->insert("INSERT INTO CUSTOMER VALUES (sq_customer.NEXTVAL, :firstname, :lastname, :username, :address, :phone, :email, :password, 'default.png', 'inactive' )", $firstname, $lastname, $username, $address, $phone, $email, $password);
     }
 
-    public function addUser($firstname, $lastname, $username, $address, $phone, $email, $password, $image, $status){
-      // insert records to users table
-      return $this->insert("INSERT INTO CUSTOMER VALUES (sq_customer.NEXTVAL, :firstname, :lastname, :username, :address, :phone, :email, :password, :image, :status )", $firstname, $lastname, $username, $address, $phone, $email, $password, $image, $status);
+    public function getCategories() {
+      return $this->selectAll("SELECT * FROM CATEGORY");
     }
 
     public function getToken($username, $password){

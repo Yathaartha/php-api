@@ -27,11 +27,70 @@ class Database
     }
 
     // function for select statement
-    public function select($query, $params = array())
+    public function select($query, $limit)
     {
         try {
             $stmt = oci_parse($this->connection, $query);
             $refcur = oci_new_cursor($this->connection);
+            oci_bind_by_name($stmt, ":limit", $limit);
+            oci_execute($stmt);
+            oci_fetch_all($stmt, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
+            return $result;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());  
+        }
+    }
+    // function for select statement
+    public function selectById($query, $id)
+    {
+        try {
+            $stmt = oci_parse($this->connection, $query);
+            $refcur = oci_new_cursor($this->connection);
+            oci_bind_by_name($stmt, ":id", $id);
+            oci_execute($stmt);
+            oci_fetch_all($stmt, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
+            return $result;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());  
+        }
+    }
+
+    // function for select all statement
+    public function selectAll($query, $params = null)
+    {
+        try {
+            $stmt = oci_parse($this->connection, $query);
+            $refcur = oci_new_cursor($this->connection);
+            oci_execute($stmt);
+            oci_fetch_all($stmt, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
+            return $result;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());  
+        }
+    }
+
+    // function for select statement
+    public function search($query, $searchkey)
+    {
+        try {
+            $stmt = oci_parse($this->connection, $query);
+            $refcur = oci_new_cursor($this->connection);
+            oci_bind_by_name($stmt, ":searchkey", $searchkey);
+            oci_execute($stmt);
+            oci_fetch_all($stmt, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
+            return $result;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());  
+        }
+    }
+
+    // function for select statement
+    public function getSingleProduct($query, $productId)
+    {
+        try {
+            $stmt = oci_parse($this->connection, $query);
+            $refcur = oci_new_cursor($this->connection);
+            oci_bind_by_name($stmt, ":productid", $productId);
             oci_execute($stmt);
             oci_fetch_all($stmt, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
             return $result;
@@ -70,23 +129,10 @@ class Database
             throw new Exception($e->getMessage());  
         }
     }
- 
-    // public function select($query = "" , $params = [])
-    // {
-    //     try {
-    //         $stmt = $this->executeStatement( $query , $params );
-    //         $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);               
-    //         $stmt->close();
- 
-    //         return $result;
-    //     } catch(Exception $e) {
-    //         throw New Exception( $e->getMessage() );
-    //     }
-    //     return false;
-    // }
+
 
     // insert function
-    public function insert($query, $firstname, $lastname, $username, $address, $phone, $email, $password, $image , $status)
+    public function insert($query, $firstname, $lastname, $username, $address, $phone, $email, $password)
     {
         $mail = new PHPMailer();
         try {
@@ -98,11 +144,7 @@ class Database
             oci_bind_by_name($stmt, ':phone', $phone);
             oci_bind_by_name($stmt, ':email', $email);
             oci_bind_by_name($stmt, ':password', $password);
-            oci_bind_by_name($stmt, ':image', $image);
-            oci_bind_by_name($stmt, ':status', $status);
 
-            oci_execute($stmt);
-            
             //Server settings
             $mail->SMTPDebug = SMTP::DEBUG_OFF;                      //Enable verbose debug output
             $mail->isSMTP();                                            //Send using SMTP
@@ -117,22 +159,15 @@ class Database
             //Recipients
             $mail->setFrom('chhemart@gmail.com', 'Mailer');
             $mail->addAddress($email, $firstname);     //Add a recipient
-            // $mail->addAddress('ellen@example.com');               //Name is optional
-            // $mail->addReplyTo('info@example.com', 'Information');
-            // $mail->addCC('cc@example.com');
-            // $mail->addBCC('bcc@example.com');
-
-            //Attachments
-            // $mail->addAttachment('/var/tmp/file.tar.gz');         //Add attachments
-            // $mail->addAttachment('/tmp/image.jpg', 'new.jpg');    //Optional name
 
             //Content
             $mail->isHTML(true);                                  //Set email format to HTML
             $mail->Subject = 'Welcome To CHH E-Mart';
             $mail->Body    = 'We are excited to welcome you to the <b>CHH Emart</b> Family. Below you will find your username and password to login to your account. <br> <br> Username: '.$username.' <br> Password: '.$password.' <br> <br> Thank you for joining us!';
             $mail->AltBody = 'We are excited to welcome you to the CHH Emart Family. Below you will find your username and password to login to your account. Username: '.$username.' Password: '.$password.' Thank you for joining us!';
-
+            
             try{
+                oci_execute($stmt);
                 $mail->send();
                 echo 'Message has been sent';
             }catch(Exception $e) {
@@ -148,8 +183,6 @@ class Database
                 'phone' => $phone,
                 'email' => $email,
                 'password' => $password,
-                'image' => $image,
-                'status' => $status
             );
 
             return $result;
@@ -157,25 +190,7 @@ class Database
             throw new Exception($e->getMessage());   
         }
     }
- 
-    // // insert function
-    // public function insert($query, $user_name, $user_mail, $user_status)
-    // {
-    //     try {
-    //         $stmt = $this->connection->prepare( $query );
-    //         $stmt->bind_param('ssi', $user_name, $user_mail, $user_status);
-    //         $stmt->execute();
 
-    //         $stmt->close();
- 
-    //         return true;
-    //     } catch(Exception $e) {
-    //         throw New Exception( $e->getMessage() );
-    //     }
-    //     return false;
-    // }
-
-    // execute statement
     public function executeStatement($query, $params = array())
     {
         try {
