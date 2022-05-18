@@ -18,4 +18,7 @@
 
   // include the user model file
   require_once PROJECT_ROOT_PATH . "/php-api/Model/ProductModel.php";
+
+  // include the user model file
+  require_once PROJECT_ROOT_PATH . "/php-api/Model/WishlistModel.php";
 ?>

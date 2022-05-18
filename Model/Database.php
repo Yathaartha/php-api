@@ -132,6 +132,40 @@ class Database
 
 
     // insert function
+    public function createWishlist($query, $id)
+    {
+        try {
+            $stmt = oci_parse($this->connection, $query);
+            oci_bind_by_name($stmt, ':id', $id);
+            oci_execute($stmt);
+
+            return $id;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());   
+        }
+    }
+
+    // insert function
+    public function addToWishlist($query, $wishlist, $product)
+    {
+        try {
+            $stmt = oci_parse($this->connection, $query);
+            $refcur = oci_new_cursor($this->connection);
+            oci_bind_by_name($stmt, ':wishlist', $wishlist);
+            oci_bind_by_name($stmt, ':product', $product);
+            oci_execute($stmt);
+
+            $result = array(
+                'wishlist'=> $wishlist,
+                'product'=> $product
+            );
+
+            return $result;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());   
+        }
+    }
+    // insert function
     public function insert($query, $firstname, $lastname, $username, $address, $phone, $email, $password)
     {
         $mail = new PHPMailer();
@@ -168,22 +202,28 @@ class Database
             
             try{
                 oci_execute($stmt);
+                
                 $mail->send();
-                echo 'Message has been sent';
             }catch(Exception $e) {
                 echo $e;
             }
 
             // create 2d array with all form values
-            $result = array(
-                'firstname' => $firstname,
-                'lastname' => $lastname,
-                'username' => $username,
-                'address' => $address,
-                'phone' => $phone,
-                'email' => $email,
-                'password' => $password,
-            );
+            // $result = array(
+            //     'firstname' => $firstname,
+            //     'lastname' => $lastname,
+            //     'username' => $username,
+            //     'address' => $address,
+            //     'phone' => $phone,
+            //     'email' => $email,
+            //     'password' => $password,
+            // );
+
+            $stmt1 = oci_parse($this->connection, 'SELECT * FROM CUSTOMER WHERE USERNAME = :username');
+            $refcur = oci_new_cursor($this->connection);
+            oci_bind_by_name($stmt1, ':username', $username);
+            oci_execute($stmt1);
+            oci_fetch_all($stmt1, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
 
             return $result;
         } catch (Exception $e) {

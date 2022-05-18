@@ -33,6 +33,11 @@
     $objFeedController = new TraderController();
     $strMethodName = $uri[4] . 'Action';
     $objFeedController->{$strMethodName}();
+  }elseif(($uri[3]) && $uri[3] == 'wishlist'){
+    require PROJECT_ROOT_PATH . "/php-api/Controller/Api/WishlistController.php";
+    $objFeedController = new WishlistController();
+    $strMethodName = $uri[4] . 'Action';
+    $objFeedController->{$strMethodName}();
   }
   else{
     header("HTTP/1.1 404 Not Found");

@@ -5,6 +5,8 @@
     public function addUser($firstname, $lastname, $username, $address, $phone, $email, $password){
       // insert records to users table
       return $this->insert("INSERT INTO CUSTOMER VALUES (sq_customer.NEXTVAL, :firstname, :lastname, :username, :address, :phone, :email, :password, 'default.png', 'inactive' )", $firstname, $lastname, $username, $address, $phone, $email, $password);
+      // $userId = $this->getToken($username, $password);
+      // $this->createWishList("INSERT INTO WISHLIST VALUES (sq_wishlist.NEXTVAL, :id)", $userId['CUSTOMERID']);
     }
 
     public function getCategories() {
