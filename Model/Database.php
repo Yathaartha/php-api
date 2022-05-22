@@ -149,7 +149,7 @@ class Database
         try {
             $stmt = oci_parse($this->connection, $query);
             $refcur = oci_new_cursor($this->connection);
-            oci_bind_by_name($stmt, ':CUSTOMERID', $id);
+            oci_bind_by_name($stmt, ':id', $id);
 
             if(false === oci_execute($stmt)){
                 $e = oci_error($stmt);
@@ -293,6 +293,57 @@ class Database
             $stmt1 = oci_parse($this->connection, 'SELECT * FROM CUSTOMER WHERE USERNAME = :username');
             $refcur = oci_new_cursor($this->connection);
             oci_bind_by_name($stmt1, ':username', $username);
+            oci_execute($stmt1);
+            oci_fetch_all($stmt1, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
+
+            return $result;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());   
+        }
+    }
+    // insert function
+    public function insertOrder($query, $cartid, $orderdate, $total, $collectiondate, $collectionslot, $email)
+    {
+        $mail = new PHPMailer();
+        try {
+            $stmt = oci_parse($this->connection, $query);
+            oci_bind_by_name($stmt, ':cartid', $cartid);
+            oci_bind_by_name($stmt, ':orderdate', $orderdate);
+            oci_bind_by_name($stmt, ':total', $total);
+            oci_bind_by_name($stmt, ':collectiondate', $collectiondate);
+            oci_bind_by_name($stmt, ':collectionslot', $collectionslot);
+
+            //Server settings
+            $mail->SMTPDebug = SMTP::DEBUG_OFF;                      //Enable verbose debug output
+            $mail->isSMTP();                                            //Send using SMTP
+            // set host mail
+            $mail->Host       = 'tls://smtp.gmail.com';                    
+            $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+            $mail->Username   = 'chhemart@gmail.com';                     //SMTP username
+            $mail->Password   = 'chhemart@123';                               //SMTP password
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
+            $mail->Port       = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+
+            //Recipients
+            $mail->setFrom('chhemart@gmail.com', 'Mailer');
+            $mail->addAddress($email);     //Add a recipient
+
+            //Content
+            $mail->isHTML(true);                                  //Set email format to HTML
+            $mail->Subject = 'Your order is placed!';
+            $mail->Body    = 'Hello<br />Thank you for ordering from Daraz!<br />Were excited for you to receive your order and will notify you once its on its way. If you have ordered from multiple sellers, your items will be delivered in separate packages. We hope you had a great shopping experience! You can check your order status here.';
+            $mail->AltBody = 'Hello, Thank you for ordering from Daraz! Were excited for you to receive your order and will notify you once its on its way. If you have ordered from multiple sellers, your items will be delivered in separate packages. We hope you had a great shopping experience! You can check your order status here.';
+            
+            try{
+                oci_execute($stmt);
+                $mail->send();
+            }catch(Exception $e) {
+                echo $e;
+            }
+
+            $stmt1 = oci_parse($this->connection, 'SELECT * FROM ORDERS WHERE CART = :cartid');
+            $refcur = oci_new_cursor($this->connection);
+            oci_bind_by_name($stmt1, ':cartid', $cartid);
             oci_execute($stmt1);
             oci_fetch_all($stmt1, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
 

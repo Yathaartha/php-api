@@ -3,11 +3,11 @@
 
   class OrderModel extends Database {
     public function checkSlot($collectiondate, $collectiontime) {
-      return $this->selectSlot("SELECT * FROM ORDERS WHERE COLLECTIONDATE = :collectiondate AND COLLECTIONSLOT = :collectiontime", $collectiondate, $collectiontime);
+      return $this->selectSlot("SELECT * FROM ORDERS WHERE COLLECTIONDATE = TO_DATE(:collectiondate, 'MM/DD/YYYY') AND COLLECTIONSLOT = :collectiontime", $collectiondate, $collectiontime);
     }
 
-    public function createOrder($customerid){
-      return $this->selectById("INSERT INTO ORDERS VALUES (sq_orders, :cartid, :orderdate, :collectiondate, :collectionslot, 'pending')", $customerid);
+    public function createOrder($cartid, $orderdate, $total, $collectiondate, $collectionslot, $email){
+      return $this->insertOrder("INSERT INTO ORDERS VALUES (null, :cartid, TO_DATE(:orderdate, 'MM/DD/YYYY'), :total, TO_DATE(:collectiondate, 'MM/DD/YYYY'), :collectionslot, 'pending')", $cartid, $orderdate, $total, $collectiondate, $collectionslot, $email);
     }
 
     public function getCartItems($id){

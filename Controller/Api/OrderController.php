@@ -43,24 +43,20 @@
         }
 
       /**
-        * "/cart/list" Endpoint - get wishlist
+        * "/order/place" Endpoint - get wishlist
         */
     
-        public function listAction(){
+        public function placeAction(){
           $strErrorDesc = '';
           $requestMethod = $_SERVER["REQUEST_METHOD"];
-          $arrQueryStringParams = $_GET;
+          $arrFormParams = json_decode(file_get_contents('php://input'), true);
 
           $customerId = "";
 
-          if(isset($arrQueryStringParams['id'])){
-            $customerId = $arrQueryStringParams['id'];
-          }
-
           // if(strtoupper($requestMethod) == 'POST'){
             try{
-              $cartModel = new CartModel();
-              $arrUser = $cartModel->getCart($customerId);
+              $orderModel = new OrderModel();
+              $arrUser = $orderModel->createOrder($arrFormParams['cartid'], $arrFormParams['orderdate'], $arrFormParams['total'], $arrFormParams['collectiondate'], $arrFormParams['collectiontime'], $arrFormParams['email']);
               $responseData = json_encode($arrUser);
             } catch(Error $e){
               $strErrorDesc = $e->getMessage().'Something went wrong! Please contact supper.';
