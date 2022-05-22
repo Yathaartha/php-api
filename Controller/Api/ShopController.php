@@ -1,8 +1,8 @@
 <?php
 
-  class ProductController extends BaseController{
+  class ShopController extends BaseController{
     /**
-     * "/product/list" Endpoint - Get list of products
+     * "/shop/list" Endpoint - Get list of products
      */
     public function listAction(){
       $strErrorDesc = '';
@@ -11,29 +11,10 @@
 
       if(strtoupper($requestMethod) == 'GET'){
         try{
-          $productModel = new ProductModel();
-
-        if(isset($arrQueryStringParams['limit'])){
-
-          $intLimit = 10;
-
-          if(isset($arrQueryStringParams['limit']) && $arrQueryStringParams['limit']){
-            $intLimit = $arrQueryStringParams['limit'];
-          }
-          if(isset($arrQueryStringParams['highlight'] ) && $arrQueryStringParams['highlight']){
-            $highlight = $arrQueryStringParams['highlight'];
-            $arrProducts = $productModel->getHighlightedProducts($highlight ,$intLimit);
-            $responseData = json_encode($arrProducts);
-          }else{
-            $arrProducts = $productModel->getProducts($intLimit);
-            $responseData = json_encode($arrProducts);
-          }
-        } 
-        if(isset($arrQueryStringParams['shop'])){
-          $intProductId = $arrQueryStringParams['shop'];
-          $arrProduct = $productModel->getProductByShop($intProductId);
+          $productModel = new ShopModel();
+        
+          $arrProduct = $productModel->getShops();
           $responseData = json_encode($arrProduct);
-        }
         } catch(Error $e){
           $strErrorDesc = $e->getMessage().'Something went wrong! Please contact supper.';
           $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';

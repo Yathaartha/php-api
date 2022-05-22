@@ -1,9 +1,9 @@
 <?php
-  class OrderController extends BaseController{
+  class CartController extends BaseController{
       /**
-        * "/order/check" Endpoint - Create new wishlist
+        * "/cart/create" Endpoint - Create new wishlist
         */
-        public function checkAction(){
+        public function createAction(){
           $strErrorDesc = '';
           $requestMethod = $_SERVER["REQUEST_METHOD"];
           $arrQueryStringParams = $_GET;
@@ -11,18 +11,15 @@
 
           // if(strtoupper($requestMethod) == 'POST'){
             try{
-              $cartModel = new OrderModel();
-              $date = "";
-              $time = "";
+              $cartModel = new CartModel();
+              $id = "";
 
-              if(isset($arrQueryStringParams['date'])){
-                $date = $arrQueryStringParams['date'];
-              }
-              if(isset($arrQueryStringParams['time'])){
-                $time = $arrQueryStringParams['time'];
+              if(isset($arrQueryStringParams['id'])){
+                $id = $arrQueryStringParams['id'];
               }
 
-              $arrUser = $cartModel->checkSlot($date, $time);
+
+              $arrUser = $cartModel->cartCreate($id);
               $responseData = json_encode($arrUser);
             } catch(Error $e){
               $strErrorDesc = $e->getMessage().'Something went wrong! Please contact supper.';

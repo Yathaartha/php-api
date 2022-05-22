@@ -3,7 +3,7 @@
 
   class WishlistModel extends Database {
     public function createWish($id) {
-      return $this->createWishlist("INSERT INTO WISHLIST VALUES (sq_wishlist.NEXTVAL, :id)", $id);
+      return $this->createById("INSERT INTO WISHLIST VALUES (sq_wishlist.NEXTVAL, :id)", $id);
     }
 
     public function getWishlist($customerid){

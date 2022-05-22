@@ -38,6 +38,21 @@
     $objFeedController = new WishlistController();
     $strMethodName = $uri[4] . 'Action';
     $objFeedController->{$strMethodName}();
+  }elseif(($uri[3]) && $uri[3] == 'shop'){
+    require PROJECT_ROOT_PATH . "/php-api/Controller/Api/ShopController.php";
+    $objFeedController = new ShopController();
+    $strMethodName = $uri[4] . 'Action';
+    $objFeedController->{$strMethodName}();
+  }elseif(($uri[3]) && $uri[3] == 'cart'){
+    require PROJECT_ROOT_PATH . "/php-api/Controller/Api/CartController.php";
+    $objFeedController = new CartController();
+    $strMethodName = $uri[4] . 'Action';
+    $objFeedController->{$strMethodName}();
+  }elseif(($uri[3]) && $uri[3] == 'order'){
+    require PROJECT_ROOT_PATH . "/php-api/Controller/Api/OrderController.php";
+    $objFeedController = new OrderController();
+    $strMethodName = $uri[4] . 'Action';
+    $objFeedController->{$strMethodName}();
   }
   else{
     header("HTTP/1.1 404 Not Found");

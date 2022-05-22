@@ -47,9 +47,33 @@ class Database
             $stmt = oci_parse($this->connection, $query);
             $refcur = oci_new_cursor($this->connection);
             oci_bind_by_name($stmt, ":id", $id);
-            oci_execute($stmt);
-            oci_fetch_all($stmt, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
-            return $result;
+            if(false === oci_execute($stmt)){
+                $err = oci_error($stmt);
+                return $err;
+            }else{
+                oci_fetch_all($stmt, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
+                return $result;
+            }
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());  
+        }
+    }
+
+    // function for select statement
+    public function selectSlot($query, $collectiondate, $collectiontime)
+    {
+        try {
+            $stmt = oci_parse($this->connection, $query);
+            $refcur = oci_new_cursor($this->connection);
+            oci_bind_by_name($stmt, ":collectiondate", $collectiondate);
+            oci_bind_by_name($stmt, ":collectiontime", $collectiontime);
+            if(false === oci_execute($stmt)){
+                $err = oci_error($stmt);
+                return $err;
+            }else{
+                oci_fetch_all($stmt, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
+                return $result;
+            }
         } catch (Exception $e) {
             throw new Exception($e->getMessage());  
         }
@@ -107,9 +131,13 @@ class Database
             $refcur = oci_new_cursor($this->connection);
             oci_bind_by_name($stmt, ':username', $username);
             oci_bind_by_name($stmt, ':password', $password);
-            oci_execute($stmt);
-            oci_fetch_all($stmt, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
-            return $result;
+            if(false === oci_execute($stmt)){
+                $err = oci_error($stmt);
+                return $err;
+            }else{
+                oci_fetch_all($stmt, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
+                return $result;
+            }
         } catch (Exception $e) {
             throw new Exception($e->getMessage());  
         }
@@ -122,9 +150,15 @@ class Database
             $stmt = oci_parse($this->connection, $query);
             $refcur = oci_new_cursor($this->connection);
             oci_bind_by_name($stmt, ':CUSTOMERID', $id);
-            oci_execute($stmt);
-            oci_fetch_all($stmt, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
-            return $result;
+
+            if(false === oci_execute($stmt)){
+                $e = oci_error($stmt);
+                return $e;
+            }else{
+                oci_fetch_all($stmt, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
+
+                return $result;
+            }
         } catch (Exception $e) {
             throw new Exception($e->getMessage());  
         }
@@ -132,14 +166,18 @@ class Database
 
 
     // insert function
-    public function createWishlist($query, $id)
+    public function createById($query, $id)
     {
         try {
             $stmt = oci_parse($this->connection, $query);
             oci_bind_by_name($stmt, ':id', $id);
-            oci_execute($stmt);
+            if(false === oci_execute($stmt)) {
+                $err = oci_error($stmt);
+                return $err;
+            }else{
+                return $id;
+            }
 
-            return $id;
         } catch (Exception $e) {
             throw new Exception($e->getMessage());   
         }
@@ -153,16 +191,49 @@ class Database
             $refcur = oci_new_cursor($this->connection);
             oci_bind_by_name($stmt, ':wishlist', $wishlist);
             oci_bind_by_name($stmt, ':product', $product);
-            oci_execute($stmt);
+            if(false === oci_execute($stmt)) {
+                return oci_error($stmt);
+            }else{
+                $result = array(
+                    'wishlist'=> $wishlist,
+                    'product'=> $product
+                );
+    
+                return $result;
 
-            $result = array(
-                'wishlist'=> $wishlist,
-                'product'=> $product
-            );
-
-            return $result;
+            }
+            // oci_execute($stmt);
         } catch (Exception $e) {
-            throw new Exception($e->getMessage());   
+            throw new Exception($e->getMessage());
+            return ;  
+        }
+    }
+
+    // insert function
+    public function addToCart($query, $cart, $product, $quantity)
+    {
+        try {
+            $stmt = oci_parse($this->connection, $query);
+            $refcur = oci_new_cursor($this->connection);
+            oci_bind_by_name($stmt, ':cart', $cart);
+            oci_bind_by_name($stmt, ':product', $product);
+            oci_bind_by_name($stmt, ':quantity', $quantity);
+            if(false === oci_execute($stmt)) {
+                return oci_error($stmt);
+            }else{
+                $result = array(
+                    'cart'=> $cart,
+                    'product'=> $product,
+                    'quantity' => $quantity
+                );
+    
+                return $result;
+
+            }
+            // oci_execute($stmt);
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+            return ;  
         }
     }
     // insert function
