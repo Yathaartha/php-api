@@ -10,8 +10,8 @@
       return $this->insertOrder("INSERT INTO ORDERS VALUES (null, :cartid, TO_DATE(:orderdate, 'MM/DD/YYYY'), :total, TO_DATE(:collectiondate, 'MM/DD/YYYY'), :collectionslot, 'pending')", $cartid, $orderdate, $total, $collectiondate, $collectionslot, $email);
     }
 
-    public function getCartItems($id){
-      return $this->selectById("SELECT * FROM CARTITEMS WHERE CART = :id", $id);
+    public function getOrder($id){
+      return $this->selectById("SELECT * FROM ORDERS WHERE ORDERNO = :id", $id);
     }
 
     public function addItemToCart($cartId, $productId, $quantity){

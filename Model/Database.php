@@ -47,6 +47,7 @@ class Database
             $stmt = oci_parse($this->connection, $query);
             $refcur = oci_new_cursor($this->connection);
             oci_bind_by_name($stmt, ":id", $id);
+            
             if(false === oci_execute($stmt)){
                 $err = oci_error($stmt);
                 return $err;
@@ -331,8 +332,8 @@ class Database
             //Content
             $mail->isHTML(true);                                  //Set email format to HTML
             $mail->Subject = 'Your order is placed!';
-            $mail->Body    = 'Hello<br />Thank you for ordering from Daraz!<br />Were excited for you to receive your order and will notify you once its on its way. If you have ordered from multiple sellers, your items will be delivered in separate packages. We hope you had a great shopping experience! You can check your order status here.';
-            $mail->AltBody = 'Hello, Thank you for ordering from Daraz! Were excited for you to receive your order and will notify you once its on its way. If you have ordered from multiple sellers, your items will be delivered in separate packages. We hope you had a great shopping experience! You can check your order status here.';
+            $mail->Body    = 'Hello<br />Thank you for ordering from CHH E-Mart!<br />Were excited for you to receive your order and will notify you once its on its way. If you have ordered from multiple sellers, your items will be delivered in separate packages. We hope you had a great shopping experience! You can check your order status here.';
+            $mail->AltBody = 'Hello, Thank you for ordering from CHH E-Mart! Were excited for you to receive your order and will notify you once its on its way. If you have ordered from multiple sellers, your items will be delivered in separate packages. We hope you had a great shopping experience! You can check your order status here.';
             
             try{
                 oci_execute($stmt);
@@ -348,6 +349,40 @@ class Database
             oci_fetch_all($stmt1, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
 
             return $result;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());   
+        }
+    }
+    // insert function
+    public function insertShop($query, $shopname, $shopdescription, $shopimage, $bannerimage, $trader)
+    {
+        try {
+            $stmt = oci_parse($this->connection, $query);
+            oci_bind_by_name($stmt, ':shopname', $shopname);
+            oci_bind_by_name($stmt, ':shopdescription', $shopdescription);
+            oci_bind_by_name($stmt, ':shopimage', $shopimage);
+            oci_bind_by_name($stmt, ':bannerimage', $bannerimage);
+            oci_bind_by_name($stmt, ':traderid', $trader);
+
+            try{
+                if(false == oci_execute($stmt)){
+                    $err = oci_error(($stmt));
+                    return $err;
+                }else{
+                    
+                    $stmt1 = oci_parse($this->connection, 'SELECT * FROM SHOP WHERE SHOPNAME = :shopname');
+                    $refcur = oci_new_cursor($this->connection);
+                    oci_bind_by_name($stmt1, ':shopname', $shopname);
+                    oci_execute($stmt1);
+                    oci_fetch_all($stmt1, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
+        
+                    return $result;
+                }
+                
+            }catch(Exception $e) {
+                echo $e;
+            }
+
         } catch (Exception $e) {
             throw new Exception($e->getMessage());   
         }

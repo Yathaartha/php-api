@@ -1,6 +1,6 @@
 <?php
 
-  class ShopController extends BaseController{
+  class OfferController extends BaseController{
     /**
      * "/shop/list" Endpoint - Get list of products
      */
@@ -11,9 +11,9 @@
 
       if(strtoupper($requestMethod) == 'GET'){
         try{
-          $productModel = new ShopModel();
+          $offerModel = new OfferModel();
         
-          $arrProduct = $productModel->getShops();
+          $arrProduct = $offerModel->getOffers();
           $responseData = json_encode($arrProduct);
         } catch(Error $e){
           $strErrorDesc = $e->getMessage().'Something went wrong! Please contact supper.';

@@ -77,24 +77,24 @@
         }
 
       /**
-        * "/cart/item" Endpoint - get wishlist
+        * "/order/list" Endpoint - get order
         */
     
-        public function itemAction(){
+        public function listAction(){
           $strErrorDesc = '';
           $requestMethod = $_SERVER["REQUEST_METHOD"];
           $arrQueryStringParams = $_GET;
 
-          $cartId = "";
+          $orderId = "";
 
           if(isset($arrQueryStringParams['id'])){
-            $cartId = $arrQueryStringParams['id'];
+            $orderId = $arrQueryStringParams['id'];
           }
 
           // if(strtoupper($requestMethod) == 'POST'){
             try{
-              $cartModel = new CartModel();
-              $arrUser = $cartModel->getCartItems($cartId);
+              $orderModel = new OrderModel();
+              $arrUser = $orderModel->getOrder($orderId);
               $responseData = json_encode($arrUser);
             } catch(Error $e){
               $strErrorDesc = $e->getMessage().'Something went wrong! Please contact supper.';

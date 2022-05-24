@@ -53,6 +53,16 @@
     $objFeedController = new OrderController();
     $strMethodName = $uri[4] . 'Action';
     $objFeedController->{$strMethodName}();
+  }elseif(($uri[3]) && $uri[3] == 'review'){
+    require PROJECT_ROOT_PATH . "/php-api/Controller/Api/ReviewController.php";
+    $objFeedController = new ReviewController();
+    $strMethodName = $uri[4] . 'Action';
+    $objFeedController->{$strMethodName}();
+  }elseif(($uri[3]) && $uri[3] == 'offer'){
+    require PROJECT_ROOT_PATH . "/php-api/Controller/Api/OfferController.php";
+    $objFeedController = new OfferController();
+    $strMethodName = $uri[4] . 'Action';
+    $objFeedController->{$strMethodName}();
   }
   else{
     header("HTTP/1.1 404 Not Found");

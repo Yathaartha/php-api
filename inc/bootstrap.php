@@ -30,4 +30,10 @@
 
   // include the order model file
   require_once PROJECT_ROOT_PATH . "/php-api/Model/OrderModel.php";
+
+  // include the order model file
+  require_once PROJECT_ROOT_PATH . "/php-api/Model/ReviewModel.php";
+
+  // include the order model file
+  require_once PROJECT_ROOT_PATH . "/php-api/Model/OfferModel.php";
 ?>
