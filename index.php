@@ -8,6 +8,7 @@
   header('Access-Control-Max-Age: 1000');
   header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
   require __DIR__ . "/inc/bootstrap.php";
+  ini_set('display_errors', FALSE);
   
   $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
   $uri = explode( '/', $uri );

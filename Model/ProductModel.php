@@ -26,9 +26,10 @@
       return $this->search("SELECT * FROM product where upper(productname) like :searchkey", $searchkey); 
     }
 
-    public function addProduct($firstname, $lastname, $username, $address, $phone, $email, $password, $image, $status){
+    public function addProduct($name, $price, $description, $image, $stock, $shop, $category, $offer){
       // insert records to users table
-      return $this->insert("INSERT INTO CUSTOMER VALUES (sq_customer.NEXTVAL, :firstname, :lastname, :username, :address, :phone, :email, :password, :image, :status )", $firstname, $lastname, $username, $address, $phone, $email, $password, $image, $status);
+      $image = "http://localhost:1000/php-api/assets/images/" . $image;
+      return $this->insertProduct("INSERT INTO PRODUCT VALUES (null, :name, :description, :price, :image, :stock, 'pending', 'false', 'false', 'false', :shop, :category, :offer)", $name, $description, $price, $image, $stock, $shop, $category, $offer);
     }
 
     public function getProductByShop($id){

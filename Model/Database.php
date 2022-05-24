@@ -205,7 +205,7 @@ class Database
             }
             // oci_execute($stmt);
         } catch (Exception $e) {
-            throw new Exception($e->getMessage());
+            // throw new Exception($e->getMessage());
             return ;  
         }
     }
@@ -226,6 +226,32 @@ class Database
                     'cart'=> $cart,
                     'product'=> $product,
                     'quantity' => $quantity
+                );
+    
+                return $result;
+
+            }
+            // oci_execute($stmt);
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+            return ;  
+        }
+    }
+
+    // insert function
+    public function removeFromWishlist($query, $wishlistId, $productId)
+    {
+        try {
+            $stmt = oci_parse($this->connection, $query);
+            $refcur = oci_new_cursor($this->connection);
+            oci_bind_by_name($stmt, ':wishlistid', $wishlistId);
+            oci_bind_by_name($stmt, ':productid', $productId);
+            if(false === oci_execute($stmt)) {
+                return oci_error($stmt);
+            }else{
+                $result = array(
+                    'product'=> $productId,
+                    'wishlist' => $wishlistId
                 );
     
                 return $result;
@@ -302,6 +328,41 @@ class Database
             throw new Exception($e->getMessage());   
         }
     }
+    // update function
+    public function update($query, $id, $firstname, $lastname, $username, $address, $phone, $email, $password, $image)
+    {
+        try {
+            $stmt = oci_parse($this->connection, $query);
+            oci_bind_by_name($stmt, ':id', $id);
+            oci_bind_by_name($stmt, ':firstname', $firstname);
+            oci_bind_by_name($stmt, ':lastname', $lastname);
+            oci_bind_by_name($stmt, ':username', $username);
+            oci_bind_by_name($stmt, ':address', $address);
+            oci_bind_by_name($stmt, ':phone', $phone);
+            oci_bind_by_name($stmt, ':email', $email);
+            oci_bind_by_name($stmt, ':password', $password);
+            oci_bind_by_name($stmt, ':image', $image);
+            
+            if(false === oci_execute($stmt)) {
+                return oci_error($stmt);
+            }else{
+                $result = array(
+                    'id' => $id,
+                    'firstname' => $firstname,
+                    'lastname' => $lastname,
+                    'username' => $username,
+                    'address' => $address,
+                    'phone' => $phone,
+                    'email' => $email,
+                    'password' => $password,
+                    'image' => $image
+                );
+                return $result;
+            }
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());   
+        }
+    }
     // insert function
     public function insertOrder($query, $cartid, $orderdate, $total, $collectiondate, $collectionslot, $email)
     {
@@ -373,6 +434,78 @@ class Database
                     $stmt1 = oci_parse($this->connection, 'SELECT * FROM SHOP WHERE SHOPNAME = :shopname');
                     $refcur = oci_new_cursor($this->connection);
                     oci_bind_by_name($stmt1, ':shopname', $shopname);
+                    oci_execute($stmt1);
+                    oci_fetch_all($stmt1, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
+        
+                    return $result;
+                }
+                
+            }catch(Exception $e) {
+                echo $e;
+            }
+
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());   
+        }
+    }
+    // insert function
+    public function insertOffer($query, $offername, $discount, $traderid, $startdate, $enddate)
+    {
+        try {
+            $stmt = oci_parse($this->connection, $query);
+            oci_bind_by_name($stmt, ':offername', $offername);
+            oci_bind_by_name($stmt, ':discount', $discount);
+            oci_bind_by_name($stmt, ':traderid', $traderid);
+            oci_bind_by_name($stmt, ':startdate', $startdate);
+            oci_bind_by_name($stmt, ':enddate', $enddate);
+
+            try{
+                if(false == oci_execute($stmt)){
+                    echo $enddate;
+                    $err = oci_error(($stmt));
+                    return $err;
+                }else{
+                    
+                    $stmt1 = oci_parse($this->connection, 'SELECT * FROM OFFER WHERE OFFERNAME = :offername');
+                    $refcur = oci_new_cursor($this->connection);
+                    oci_bind_by_name($stmt1, ':offername', $offername);
+                    oci_execute($stmt1);
+                    oci_fetch_all($stmt1, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
+        
+                    return $result;
+                }
+                
+            }catch(Exception $e) {
+                echo $e;
+            }
+
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());   
+        }
+    }
+    // insert function
+    public function insertProduct($query, $name, $description, $price, $image, $stock, $shop, $category, $offer)
+    {
+        try {
+            $stmt = oci_parse($this->connection, $query);
+            oci_bind_by_name($stmt, ':name', $name);
+            oci_bind_by_name($stmt, ':description', $description);
+            oci_bind_by_name($stmt, ':price', $price);
+            oci_bind_by_name($stmt, ':image', $image);
+            oci_bind_by_name($stmt, ':stock', $stock);
+            oci_bind_by_name($stmt, ':shop', $shop);
+            oci_bind_by_name($stmt, ':category', $category);
+            oci_bind_by_name($stmt, ':offer', $offer);
+
+            try{
+                if(false == oci_execute($stmt)){
+                    $err = oci_error(($stmt));
+                    return $err;
+                }else{
+                    
+                    $stmt1 = oci_parse($this->connection, 'SELECT * FROM PRODUCT WHERE PRODUCTNAME = :name');
+                    $refcur = oci_new_cursor($this->connection);
+                    oci_bind_by_name($stmt1, ':name', $name);
                     oci_execute($stmt1);
                     oci_fetch_all($stmt1, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
         

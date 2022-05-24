@@ -146,6 +146,46 @@
             $this->sendOutput(json_encode(array('error' => $strErrorDesc)), array('Content-Type: application/json', $strErrorHeader));
           }
         }
+
+        /**
+        * "/wishlist/remove" Endpoint - Create new wishlist
+        */
+        public function removeAction(){
+          $strErrorDesc = '';
+          $requestMethod = $_SERVER["REQUEST_METHOD"];
+          $arrQueryStringParams = $_GET;
+
+          // if(strtoupper($requestMethod) == 'POST'){
+            try{
+              $wishlistModel = new WishlistModel();
+
+              if(isset($arrQueryStringParams['wishlistid'])){
+                $wishlistId = $arrQueryStringParams['wishlistid'];
+              }
+
+              if(isset($arrQueryStringParams['productid'])){
+                $productId = $arrQueryStringParams['productid'];
+              }
+
+              $arrUser = $wishlistModel->deleteFromWishlist($wishlistId, $productId);
+              $responseData = json_encode($arrUser);
+            } catch(Error $e){
+              $strErrorDesc = $e->getMessage().'Something went wrong! Please contact supper.';
+              $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+            }
+          // }
+          // else{
+          //   $strErrorDesc = 'Method not supported.';
+          //   $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+          // }
+
+          //  send output
+          if(!$strErrorDesc){
+            $this->sendOutput($responseData, array('Content-Type: application/json', 'HTTP/1.1 200 OK'));
+          }else{
+            $this->sendOutput(json_encode(array('error' => $strErrorDesc)), array('Content-Type: application/json', $strErrorHeader));
+          }
+        }
       
   }
 ?>

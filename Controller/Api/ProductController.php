@@ -131,22 +131,22 @@
           $strErrorDesc = '';
           $requestMethod = $_SERVER["REQUEST_METHOD"];
           // $arrQueryStringParams = $this->getQuerystringParams();
-          $arrFormParams = $this->getFormParams();
+          $arrFormParams = json_decode(file_get_contents('php://input'), true);
 
-          if(strtoupper($requestMethod) == 'POST'){
+          // if(strtoupper($requestMethod) == 'POST'){
             try{
-              $userModel = new ProductModel();
-              $arrUser = $userModel->addProduct($arrFormParams['firstname'], $arrFormParams['lastname'], $arrFormParams['username'], $arrFormParams['address'], $arrFormParams['phone'], $arrFormParams['email'], $arrFormParams['password'], $arrFormParams['image'], $arrFormParams['status']);
+              $productModel = new ProductModel();
+              $arrUser = $productModel->addProduct($arrFormParams['product_name'], $arrFormParams['product_price'], $arrFormParams['product_description'], $arrFormParams['product_image'], $arrFormParams['product_stock'], $arrFormParams['shop'], $arrFormParams['category'], $arrFormParams['offer']);
               $responseData = json_encode($arrUser);
             } catch(Error $e){
               $strErrorDesc = $e->getMessage().'Something went wrong! Please contact supper.';
               $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
             }
-          }
-          else{
-            $strErrorDesc = 'Method not supported.';
-            $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
-          }
+          // }
+          // else{
+          //   $strErrorDesc = 'Method not supported.';
+          //   $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+          // }
 
           //  send output
           if(!$strErrorDesc){

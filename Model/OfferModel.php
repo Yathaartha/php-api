@@ -6,10 +6,16 @@
       return $this->selectAll("SELECT * FROM OFFER");
     }
 
-    public function addOffer($shopname, $shopdescription, $shopimage, $bannerimage, $trader) {
-      $shopimage = "http://localhost:1000/php-api/assets/images/" . $shopimage;
-      $bannerimage = "http://localhost:1000/php-api/assets/images/" . $bannerimage;
-      return $this->insertShop("INSERT INTO SHOP VALUES (null, :shopname, :shopdescription, :shopimage, :bannerimage, 'active', :traderid)", $shopname, $shopdescription, $shopimage, $bannerimage, $trader);
+    public function getOffersByTrader($traderid) {
+      return $this->selectById("SELECT * FROM OFFER WHERE TRADER = :id", $traderid);
+    }
+
+    public function getOffer($offerid) {
+      return $this->selectById("SELECT * FROM OFFER WHERE OFFERID = :id", $offerid);
+    }
+
+    public function addOffer($offername, $discount, $traderid, $startdate, $enddate) {
+      return $this->insertOffer("INSERT INTO OFFER VALUES (null, :offername, :discount, :traderid, TO_DATE(:startdate, 'MM/DD/YYYY'), TO_DATE(:enddate, 'MM/DD/YYYY'))", $offername, $discount, $traderid, $startdate, $enddate);
     }
   }
 ?>

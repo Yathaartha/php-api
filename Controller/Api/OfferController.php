@@ -2,27 +2,40 @@
 
   class OfferController extends BaseController{
     /**
-     * "/shop/list" Endpoint - Get list of products
+     * "/offer/list" Endpoint - Get list of products
      */
     public function listAction(){
       $strErrorDesc = '';
       $requestMethod = $_SERVER["REQUEST_METHOD"];
       $arrQueryStringParams = $_GET;
 
-      if(strtoupper($requestMethod) == 'GET'){
+      // if(strtoupper($requestMethod) == 'GET'){
         try{
           $offerModel = new OfferModel();
-        
-          $arrProduct = $offerModel->getOffers();
-          $responseData = json_encode($arrProduct);
+
+          if(isset($arrQueryStringParams['offerid'])){
+            $offerid = $arrQueryStringParams['offerid'];
+
+            $arrOffer = $offerModel->getOffer($offerid);
+            $responseData = json_encode($arrOffer);
+          }elseif(isset($arrQueryStringParams['traderid'])){
+            $traderid = $arrQueryStringParams['traderid'];
+
+            $arrOffers = $offerModel->getOffersByTrader($traderid);
+            $responseData = json_encode($arrOffers);
+          }
+          else{
+            $arrProduct = $offerModel->getOffers();
+            $responseData = json_encode($arrProduct);
+          }
         } catch(Error $e){
           $strErrorDesc = $e->getMessage().'Something went wrong! Please contact supper.';
           $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
         }
-      }else{
-        $strErrorDesc = 'Method not supported.';
-        $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
-      }
+      // }else{
+      //   $strErrorDesc = 'Method not supported.';
+      //   $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+      // }
 
       // send output
       if(!$strErrorDesc){
@@ -34,7 +47,7 @@
     }
 
     /**
-        * "/shop/create" Endpoint - Create new shop
+        * "/offer/create" Endpoint - Create new offer
         */
     
         public function createAction(){
@@ -45,8 +58,8 @@
 
           // if(strtoupper($requestMethod) == 'POST'){
             try{
-              $shopModel = new ShopModel();
-              $arrUser = $shopModel->addShop($arrFormParams['shop_name'], $arrFormParams['shop_description'], $arrFormParams['shop_image'], $arrFormParams['banner_image'], $arrFormParams['traderid']);
+              $offerModel = new OfferModel();
+              $arrUser = $offerModel->addOffer($arrFormParams['offer_name'], $arrFormParams['discount'], $arrFormParams['traderid'], $arrFormParams['start_date'], $arrFormParams['end_date']);
               $responseData = json_encode($arrUser);
             } catch(Error $e){
               $strErrorDesc = $e->getMessage().'Something went wrong! Please contact supper.';
