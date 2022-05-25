@@ -2,9 +2,14 @@
   require_once PROJECT_ROOT_PATH . "/php-api/Model/Database.php";
 
   class TraderModel extends Database {
-    public function addTrader($firstname, $lastname, $username, $address, $phone, $email, $salescategory,$password){
+    public function addTrader($firstname, $lastname, $username, $address, $phone, $email, $salescategory, $password){
       // insert records to users table
-      return $this->insert("INSERT INTO TRADER VALUES (sq_trader.NEXTVAL, :firstname, :lastname, :username, :address, :phone, :email, :salescategory, :password, 'default.png', 'inactive' )", $firstname, $lastname, $username, $address, $phone, $email, $password);
+      return $this->insertTrader("INSERT INTO TRADER VALUES (sq_trader.NEXTVAL, :firstname, :lastname, :username, :address, :phone, :email, :salescategory, :password, 'http://localhost:1000/php-api/assets/images/default.jpg', 'inactive' )", $firstname, $lastname, $username, $address, $phone, $email, $salescategory, $password);
+    }
+
+    public function editTrader($id, $firstname, $lastname, $username, $address, $phone, $email, $salescategory, $password, $image, $status){
+      // insert records to users table
+      return $this->updateTrader("UPDATE TRADER SET FIRSTNAME = :firstname, LASTNAME = :lastname, USERNAME = :username, ADDRESS = :address, PHONE = :phone, EMAIL = :email, SALESCATEGORY = :salescategory, PASSWORD = :password, IMAGE = :image, STATUS = :status WHERE TRADERID = :id", $firstname, $lastname, $username, $address, $phone, $email, $salescategory, $password, $image, $status, $id);
     }
 
     public function getToken($username, $password){

@@ -30,9 +30,9 @@
       // insert records to users table
       $image = "http://localhost:1000/php-api/assets/images/" . $image;
       if($offer != null){
-        return $this->insertProduct("INSERT INTO PRODUCT VALUES (null, :name, :description, :price, :image, :stock, 'pending', 'false', 'false', 'false', :shop, :category, :offer)", $name, $description, $price, $image, $stock, $shop, $category, $offer);
+        return $this->insertProduct("INSERT INTO PRODUCT VALUES (null, :name, :description, :price, :image, :stock, 'Pending', 'false', 'false', 'false', :shop, :category, :offer)", $name, $description, $price, $image, $stock, $shop, $category, $offer);
       }else{
-        return $this->insertProduct("INSERT INTO PRODUCT VALUES (null, :name, :description, :price, :image, :stock, 'pending', 'false', 'false', 'false', :shop, :category, NULL)", $name, $description, $price, $image, $stock, $shop, $category, $offer);
+        return $this->insertProduct("INSERT INTO PRODUCT VALUES (null, :name, :description, :price, :image, :stock, 'Pending', 'false', 'false', 'false', :shop, :category, NULL)", $name, $description, $price, $image, $stock, $shop, $category, $offer);
       }
     }
 

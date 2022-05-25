@@ -38,23 +38,18 @@
     }
 
     /**
-     * "/product/search" Endpoint - Get list of products
+     * "/review/report" Endpoint - report review
      */
-    public function searchAction(){
+    public function reportAction(){
       $strErrorDesc = '';
       $requestMethod = $_SERVER["REQUEST_METHOD"];
-      $arrQueryStringParams = $_GET;
+      $arrFormParams = json_decode(file_get_contents('php://input'), true);
 
       if(strtoupper($requestMethod) == 'GET'){
         try{
-          $productModel = new ProductModel();
+          $reviewModel = new ReviewModel();
 
-          $searchKey = "";
-
-          if(isset($arrQueryStringParams['value']) && $arrQueryStringParams['value']){
-            $searchKey = $arrQueryStringParams['value'];
-          }
-          $arrProducts = $productModel->searchProducts($searchKey);
+          $arrProducts = $reviewModel->reportReview($arrFormParams['reviewid'], $arrFormParams['reportreason'], $arrFormParams['customerid']);
           $responseData = json_encode($arrProducts);
         } catch(Error $e){
           $strErrorDesc = $e->getMessage().'Something went wrong! Please contact supper.';
@@ -73,65 +68,29 @@
       }
     }
     /**
-     * "/product/single" Endpoint - Get list of products
-     */
-    public function singleAction(){
-      $strErrorDesc = '';
-      $requestMethod = $_SERVER["REQUEST_METHOD"];
-      $arrQueryStringParams = $_GET;
-
-      if(strtoupper($requestMethod) == 'GET'){
-        try{
-          $productModel = new ProductModel();
-
-          $productId = "";
-
-          if(isset($arrQueryStringParams['id']) && $arrQueryStringParams['id']){
-            $productId = $arrQueryStringParams['id'];
-          }
-          $arrProducts = $productModel->getProduct($productId);
-          $responseData = json_encode($arrProducts);
-        } catch(Error $e){
-          $strErrorDesc = $e->getMessage().'Something went wrong! Please contact supper.';
-          $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
-        }
-      }else{
-        $strErrorDesc = 'Method not supported.';
-        $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
-      }
-
-      // send output
-      if(!$strErrorDesc){
-        $this->sendOutput($responseData, array('Content-Type: application/json', 'HTTP/1.1 200 OK'));
-      }else{
-        $this->sendOutput(json_encode(array('error' => $strErrorDesc)), array('Content-Type: application/json', $strErrorHeader));
-      }
-    }
-
-    /**
-        * "/product/create" Endpoint - Create new product
+        * "/review/create" Endpoint - Create new review
         */
     
         public function createAction(){
           $strErrorDesc = '';
           $requestMethod = $_SERVER["REQUEST_METHOD"];
           // $arrQueryStringParams = $this->getQuerystringParams();
-          $arrFormParams = $this->getFormParams();
+          $arrFormParams = json_decode(file_get_contents('php://input'), true);
 
-          if(strtoupper($requestMethod) == 'POST'){
+          // if(strtoupper($requestMethod) == 'POST'){
             try{
-              $userModel = new ProductModel();
-              $arrUser = $userModel->addProduct($arrFormParams['firstname'], $arrFormParams['lastname'], $arrFormParams['username'], $arrFormParams['address'], $arrFormParams['phone'], $arrFormParams['email'], $arrFormParams['password'], $arrFormParams['image'], $arrFormParams['status']);
+              $reviewModel = new ReviewModel();
+              $arrUser = $reviewModel->addReview($arrFormParams['productid'], $arrFormParams['content'], $arrFormParams['rating'], $arrFormParams['customerid']);
               $responseData = json_encode($arrUser);
             } catch(Error $e){
               $strErrorDesc = $e->getMessage().'Something went wrong! Please contact supper.';
               $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
             }
-          }
-          else{
-            $strErrorDesc = 'Method not supported.';
-            $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
-          }
+          // }
+          // else{
+          //   $strErrorDesc = 'Method not supported.';
+          //   $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+          // }
 
           //  send output
           if(!$strErrorDesc){

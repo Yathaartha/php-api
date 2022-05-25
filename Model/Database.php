@@ -263,6 +263,81 @@ class Database
             return ;  
         }
     }
+
+    // insert function
+    public function deleteFromCart($query, $cartid)
+    {
+        try {
+            $stmt = oci_parse($this->connection, $query);
+            $refcur = oci_new_cursor($this->connection);
+            oci_bind_by_name($stmt, ':cartid', $cartid);
+            if(false === oci_execute($stmt)) {
+                return oci_error($stmt);
+            }else{
+                return "Deleted";
+            }
+            // oci_execute($stmt);
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+            return ;  
+        }
+    }
+    // insert function
+    public function insertReview($query, $productId, $content, $rating, $customerid)
+    {
+        try {
+
+            $check = oci_parse($this->connection, 'SELECT * FROM REVIEW WHERE PRODUCT = :productid AND CUSTOMER = :customerid');
+            oci_bind_by_name($check, ':productid', $productId);
+            oci_bind_by_name($check, ':customerid', $customerid);
+            if(false === oci_execute($check)) {
+                return oci_error($check);
+            }else{
+                oci_fetch_all($check, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
+                if(count($result) > 0){
+                    return ['message' => "You have already reviewed this product"];
+                }else{
+                    $stmt = oci_parse($this->connection, $query);
+                    $refcur = oci_new_cursor($this->connection);
+                    oci_bind_by_name($stmt, ':productid', $productId);
+                    oci_bind_by_name($stmt, ':content', $content);
+                    oci_bind_by_name($stmt, ':rating', $rating);
+                    oci_bind_by_name($stmt, ':customer', $customerid);
+                    if(false === oci_execute($stmt)) {
+                        return oci_error($stmt);
+                    }else{
+                        return "Review Added";
+                    }
+                    
+                }
+            }
+
+            // oci_execute($stmt);
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+            return ;  
+        }
+    }
+    // update function
+    public function updateReview($query, $reviewId, $reportReason, $customerId)
+    {
+        try {
+            $stmt = oci_parse($this->connection, $query);
+            $refcur = oci_new_cursor($this->connection);
+            oci_bind_by_name($stmt, ':reportreason', $reportReason);
+            oci_bind_by_name($stmt, ':customer', $customerId);
+            oci_bind_by_name($stmt, ':reviewid', $reviewId);
+            if(false === oci_execute($stmt)) {
+                return oci_error($stmt);
+            }else{
+                return "Review Reported";
+            }
+            // oci_execute($stmt);
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+            return ;  
+        }
+    }
     // insert function
     public function insert($query, $firstname, $lastname, $username, $address, $phone, $email, $password)
     {
@@ -298,6 +373,61 @@ class Database
             $mail->Body    = 'We are excited to welcome you to the <b>CHH Emart</b> Family. Below you will find your username and password to login to your account. <br> <br> Username: '.$username.' <br> Password: '.$password.' <br> <br> Thank you for joining us!';
             $mail->AltBody = 'We are excited to welcome you to the CHH Emart Family. Below you will find your username and password to login to your account. Username: '.$username.' Password: '.$password.' Thank you for joining us!';
             
+
+            if(false === oci_execute($stmt)){
+                return oci_error($stmt);
+            }else{
+                $mail->send();
+                
+                $stmt1 = oci_parse($this->connection, 'SELECT * FROM CUSTOMER WHERE USERNAME = :username');
+                $refcur = oci_new_cursor($this->connection);
+                oci_bind_by_name($stmt1, ':username', $username);
+                oci_execute($stmt1);
+                oci_fetch_all($stmt1, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
+    
+                return $result;
+
+            }
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());   
+        }
+    }
+    // insert function
+    public function insertTrader($query, $firstname, $lastname, $username, $address, $phone, $email, $password, $category)
+    {
+        $mail = new PHPMailer();
+        try {
+            $stmt = oci_parse($this->connection, $query);
+            oci_bind_by_name($stmt, ':firstname', $firstname);
+            oci_bind_by_name($stmt, ':lastname', $lastname);
+            oci_bind_by_name($stmt, ':username', $username);
+            oci_bind_by_name($stmt, ':address', $address);
+            oci_bind_by_name($stmt, ':phone', $phone);
+            oci_bind_by_name($stmt, ':email', $email);
+            oci_bind_by_name($stmt, ':password', $password);
+            oci_bind_by_name($stmt, ':category', $category);
+
+            //Server settings
+            $mail->SMTPDebug = SMTP::DEBUG_OFF;                      //Enable verbose debug output
+            $mail->isSMTP();                                            //Send using SMTP
+            // set host mail
+            $mail->Host       = 'tls://smtp.gmail.com';                    
+            $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+            $mail->Username   = 'chhemart@gmail.com';                     //SMTP username
+            $mail->Password   = 'chhemart@123';                               //SMTP password
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
+            $mail->Port       = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+
+            //Recipients
+            $mail->setFrom('chhemart@gmail.com', 'Mailer');
+            $mail->addAddress($email, $firstname);     //Add a recipient
+
+            //Content
+            $mail->isHTML(true);                                  //Set email format to HTML
+            $mail->Subject = 'Welcome To CHH E-Mart';
+            $mail->Body    = 'We are excited to welcome you to the <b>CHH E-Mart</b> Trader Family. Below you will find your username and password to login to your account. <br> <br> Username: '.$username.' <br> Password: '.$password.' <br> <br> Thank you for joining us! Be sure to follow the trader guidelines.';
+            $mail->AltBody = 'We are excited to welcome you to the CHH E-Mart Trader Family. Below you will find your username and password to login to your account. Username: '.$username.' Password: '.$password.' Thank you for joining us! Be sure to follow the trader guidelines.';
+            
             try{
                 oci_execute($stmt);
                 
@@ -324,6 +454,42 @@ class Database
             oci_fetch_all($stmt1, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
 
             return $result;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());   
+        }
+    }
+    // insert function
+    public function updateTrader($query, $firstname, $lastname, $username, $address, $phone, $email, $category, $password, $image, $status, $id)
+    {
+        try {
+            $stmt = oci_parse($this->connection, $query);
+            oci_bind_by_name($stmt, ':firstname', $firstname);
+            oci_bind_by_name($stmt, ':lastname', $lastname);
+            oci_bind_by_name($stmt, ':username', $username);
+            oci_bind_by_name($stmt, ':address', $address);
+            oci_bind_by_name($stmt, ':phone', $phone);
+            oci_bind_by_name($stmt, ':email', $email);
+            oci_bind_by_name($stmt, ':password', $password);
+            oci_bind_by_name($stmt, ':salescategory', $category);            
+            oci_bind_by_name($stmt, ':image', $image);            
+            oci_bind_by_name($stmt, ':status', $status);            
+            oci_bind_by_name($stmt, ':id', $id);            
+            try{
+                if(false === oci_execute($stmt)){
+                    return oci_error($stmt);
+                }else{
+                    $stmt1 = oci_parse($this->connection, 'SELECT * FROM TRADER WHERE TRADERID = :id');
+                    $refcur = oci_new_cursor($this->connection);
+                    oci_bind_by_name($stmt1, ':id', $id);
+                    oci_execute($stmt1);
+                    oci_fetch_all($stmt1, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
+        
+                    return $result;
+                }
+
+            }catch(Exception $e) {
+                echo $e;
+            }
         } catch (Exception $e) {
             throw new Exception($e->getMessage());   
         }

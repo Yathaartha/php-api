@@ -7,7 +7,7 @@
     }
 
     public function createOrder($cartid, $customerid, $orderdate, $total, $collectiondate, $collectionslot, $email){
-      return $this->insertOrder("INSERT INTO ORDERS VALUES (null, :cartid, :customerid, TO_DATE(:orderdate, 'MM/DD/YYYY'), :total, TO_DATE(:collectiondate, 'MM/DD/YYYY'), :collectionslot, 'pending')", $cartid, $customerid, $orderdate, $total, $collectiondate, $collectionslot, $email);
+      return $this->insertOrder("INSERT INTO ORDERS VALUES (null, :cartid, :customerid, TO_DATE(:orderdate, 'MM/DD/YYYY'), :total, TO_DATE(:collectiondate, 'MM/DD/YYYY'), :collectionslot, 'Completed')", $cartid, $customerid, $orderdate, $total, $collectiondate, $collectionslot, $email);
     }
 
     public function getOrder($id){

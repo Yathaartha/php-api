@@ -17,6 +17,10 @@
     public function addItemToCart($cartId, $productId, $quantity){
       return $this->addToCart("INSERT INTO CARTITEMS VALUES (:cart, :product, :quantity)", $cartId, $productId, $quantity);
     }
+
+    public function removeFromCart($cartId){
+      return $this->deleteFromCart("DELETE FROM CARTITEMS WHERE CART = :cartid", $cartId);
+    }
   }
 
 ?>
