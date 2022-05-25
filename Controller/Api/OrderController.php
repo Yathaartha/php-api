@@ -56,7 +56,7 @@
           // if(strtoupper($requestMethod) == 'POST'){
             try{
               $orderModel = new OrderModel();
-              $arrUser = $orderModel->createOrder($arrFormParams['cartid'], $arrFormParams['orderdate'], $arrFormParams['total'], $arrFormParams['collectiondate'], $arrFormParams['collectiontime'], $arrFormParams['email']);
+              $arrUser = $orderModel->createOrder($arrFormParams['cartid'], $arrFormParams['customer'], $arrFormParams['orderdate'], $arrFormParams['total'], $arrFormParams['collectiondate'], $arrFormParams['collectiontime'], $arrFormParams['email']);
               $responseData = json_encode($arrUser);
             } catch(Error $e){
               $strErrorDesc = $e->getMessage().'Something went wrong! Please contact supper.';
@@ -85,21 +85,26 @@
           $requestMethod = $_SERVER["REQUEST_METHOD"];
           $arrQueryStringParams = $_GET;
 
-          $orderId = "";
+          try{
 
-          if(isset($arrQueryStringParams['id'])){
-            $orderId = $arrQueryStringParams['id'];
-          }
-
-          // if(strtoupper($requestMethod) == 'POST'){
-            try{
+            if(isset($arrQueryStringParams['id'])){
+              $orderId = $arrQueryStringParams['id'];
               $orderModel = new OrderModel();
               $arrUser = $orderModel->getOrder($orderId);
-              $responseData = json_encode($arrUser);
-            } catch(Error $e){
-              $strErrorDesc = $e->getMessage().'Something went wrong! Please contact supper.';
-              $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
             }
+            
+            if(isset($arrQueryStringParams['customerid'])){
+              $customerId = $arrQueryStringParams['customerid'];
+              $orderModel = new OrderModel();
+              $arrUser = $orderModel->getCustomerOrder($customerId);
+            }
+
+            $responseData = json_encode($arrUser);
+          } catch(Error $e){
+            $strErrorDesc = $e->getMessage().'Something went wrong! Please contact supper.';
+            $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+          }
+          // if(strtoupper($requestMethod) == 'POST'){
         // }
           // else{
           //   $strErrorDesc = 'Method not supported.';

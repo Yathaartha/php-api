@@ -364,12 +364,13 @@ class Database
         }
     }
     // insert function
-    public function insertOrder($query, $cartid, $orderdate, $total, $collectiondate, $collectionslot, $email)
+    public function insertOrder($query, $cartid, $customerid, $orderdate, $total, $collectiondate, $collectionslot, $email)
     {
         $mail = new PHPMailer();
         try {
             $stmt = oci_parse($this->connection, $query);
             oci_bind_by_name($stmt, ':cartid', $cartid);
+            oci_bind_by_name($stmt, ':customerid', $customerid);
             oci_bind_by_name($stmt, ':orderdate', $orderdate);
             oci_bind_by_name($stmt, ':total', $total);
             oci_bind_by_name($stmt, ':collectiondate', $collectiondate);
@@ -396,20 +397,45 @@ class Database
             $mail->Body    = 'Hello<br />Thank you for ordering from CHH E-Mart!<br />Were excited for you to receive your order and will notify you once its on its way. If you have ordered from multiple sellers, your items will be delivered in separate packages. We hope you had a great shopping experience! You can check your order status here.';
             $mail->AltBody = 'Hello, Thank you for ordering from CHH E-Mart! Were excited for you to receive your order and will notify you once its on its way. If you have ordered from multiple sellers, your items will be delivered in separate packages. We hope you had a great shopping experience! You can check your order status here.';
             
-            try{
-                oci_execute($stmt);
-                $mail->send();
-            }catch(Exception $e) {
-                echo $e;
-            }
-
+            if(false === oci_execute($stmt)){
+                return oci_error($stmt);
+            }else{
+            $mail->send();
+    
             $stmt1 = oci_parse($this->connection, 'SELECT * FROM ORDERS WHERE CART = :cartid');
             $refcur = oci_new_cursor($this->connection);
             oci_bind_by_name($stmt1, ':cartid', $cartid);
             oci_execute($stmt1);
-            oci_fetch_all($stmt1, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
 
+            $stmt2 = oci_parse($this->connection, 'INSERT INTO CART VALUES (null, :customerid)');
+            oci_bind_by_name($stmt2, ':customerid', $customerid);
+            oci_execute($stmt2);
+
+            oci_fetch_all($stmt1, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
+    
             return $result;
+            }
+               
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());   
+        }
+    }
+    // insert function
+    public function insertPayment($query, $customerId, $orderId, $total, $paydate)
+    {
+        try {
+            $stmt = oci_parse($this->connection, $query);
+            oci_bind_by_name($stmt, ':id', $customerId);
+            oci_bind_by_name($stmt, ':orderid', $orderId);
+            oci_bind_by_name($stmt, ':total', $total);
+            oci_bind_by_name($stmt, ':paydate', $paydate);
+            
+            if( false === oci_execute($stmt)){
+                return oci_error($stmt);
+            }else{
+                return "Payment Successful";
+            }
+
         } catch (Exception $e) {
             throw new Exception($e->getMessage());   
         }

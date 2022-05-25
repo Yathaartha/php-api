@@ -64,6 +64,11 @@
     $objFeedController = new OfferController();
     $strMethodName = $uri[4] . 'Action';
     $objFeedController->{$strMethodName}();
+  }elseif(($uri[3]) && $uri[3] == 'payment'){
+    require PROJECT_ROOT_PATH . "/php-api/Controller/Api/PaymentController.php";
+    $objFeedController = new PaymentController();
+    $strMethodName = $uri[4] . 'Action';
+    $objFeedController->{$strMethodName}();
   }
   else{
     header("HTTP/1.1 404 Not Found");

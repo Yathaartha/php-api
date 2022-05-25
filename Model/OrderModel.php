@@ -6,12 +6,16 @@
       return $this->selectSlot("SELECT * FROM ORDERS WHERE COLLECTIONDATE = TO_DATE(:collectiondate, 'MM/DD/YYYY') AND COLLECTIONSLOT = :collectiontime", $collectiondate, $collectiontime);
     }
 
-    public function createOrder($cartid, $orderdate, $total, $collectiondate, $collectionslot, $email){
-      return $this->insertOrder("INSERT INTO ORDERS VALUES (null, :cartid, TO_DATE(:orderdate, 'MM/DD/YYYY'), :total, TO_DATE(:collectiondate, 'MM/DD/YYYY'), :collectionslot, 'pending')", $cartid, $orderdate, $total, $collectiondate, $collectionslot, $email);
+    public function createOrder($cartid, $customerid, $orderdate, $total, $collectiondate, $collectionslot, $email){
+      return $this->insertOrder("INSERT INTO ORDERS VALUES (null, :cartid, :customerid, TO_DATE(:orderdate, 'MM/DD/YYYY'), :total, TO_DATE(:collectiondate, 'MM/DD/YYYY'), :collectionslot, 'pending')", $cartid, $customerid, $orderdate, $total, $collectiondate, $collectionslot, $email);
     }
 
     public function getOrder($id){
       return $this->selectById("SELECT * FROM ORDERS WHERE ORDERNO = :id", $id);
+    }
+
+    public function getCustomerOrder($id){
+      return $this->selectById("SELECT * FROM ORDERS WHERE CUSTOMER = :id", $id);
     }
 
     public function addItemToCart($cartId, $productId, $quantity){

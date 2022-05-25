@@ -31,9 +31,12 @@
   // include the order model file
   require_once PROJECT_ROOT_PATH . "/php-api/Model/OrderModel.php";
 
-  // include the order model file
+  // include the review model file
   require_once PROJECT_ROOT_PATH . "/php-api/Model/ReviewModel.php";
 
-  // include the order model file
+  // include the offer model file
   require_once PROJECT_ROOT_PATH . "/php-api/Model/OfferModel.php";
+
+  // include the payment model file
+  require_once PROJECT_ROOT_PATH . "/php-api/Model/PaymentModel.php";
 ?>
