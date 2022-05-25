@@ -29,7 +29,11 @@
     public function addProduct($name, $price, $description, $image, $stock, $shop, $category, $offer){
       // insert records to users table
       $image = "http://localhost:1000/php-api/assets/images/" . $image;
-      return $this->insertProduct("INSERT INTO PRODUCT VALUES (null, :name, :description, :price, :image, :stock, 'pending', 'false', 'false', 'false', :shop, :category, :offer)", $name, $description, $price, $image, $stock, $shop, $category, $offer);
+      if($offer != null){
+        return $this->insertProduct("INSERT INTO PRODUCT VALUES (null, :name, :description, :price, :image, :stock, 'pending', 'false', 'false', 'false', :shop, :category, :offer)", $name, $description, $price, $image, $stock, $shop, $category, $offer);
+      }else{
+        return $this->insertProduct("INSERT INTO PRODUCT VALUES (null, :name, :description, :price, :image, :stock, 'pending', 'false', 'false', 'false', :shop, :category, NULL)", $name, $description, $price, $image, $stock, $shop, $category, $offer);
+      }
     }
 
     public function getProductByShop($id){

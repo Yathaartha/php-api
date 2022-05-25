@@ -546,6 +546,42 @@ class Database
             throw new Exception($e->getMessage());   
         }
     }
+    // insert function
+    public function insertProductNoOffer($query, $name, $description, $price, $image, $stock, $shop, $category)
+    {
+        try {
+            $stmt = oci_parse($this->connection, $query);
+            oci_bind_by_name($stmt, ':name', $name);
+            oci_bind_by_name($stmt, ':description', $description);
+            oci_bind_by_name($stmt, ':price', $price);
+            oci_bind_by_name($stmt, ':image', $image);
+            oci_bind_by_name($stmt, ':stock', $stock);
+            oci_bind_by_name($stmt, ':shop', $shop);
+            oci_bind_by_name($stmt, ':category', $category);
+
+            try{
+                if(false == oci_execute($stmt)){
+                    $err = oci_error(($stmt));
+                    return $err;
+                }else{
+                    
+                    $stmt1 = oci_parse($this->connection, 'SELECT * FROM PRODUCT WHERE PRODUCTNAME = :name');
+                    $refcur = oci_new_cursor($this->connection);
+                    oci_bind_by_name($stmt1, ':name', $name);
+                    oci_execute($stmt1);
+                    oci_fetch_all($stmt1, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
+        
+                    return $result;
+                }
+                
+            }catch(Exception $e) {
+                echo $e;
+            }
+
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());   
+        }
+    }
 
     public function executeStatement($query, $params = array())
     {

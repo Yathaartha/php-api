@@ -166,7 +166,7 @@
           // $arrQueryStringParams = $this->getQuerystringParams();
           $arrQueryStringParams = $_GET;
 
-          if(strtoupper($requestMethod) == 'DELETE'){
+          // if(strtoupper($requestMethod) == 'DELETE'){
             try{
               $userModel = new ProductModel();
 
@@ -181,11 +181,11 @@
               $strErrorDesc = $e->getMessage().'Something went wrong! Please contact supper.';
               $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
             }
-          }
-          else{
-            $strErrorDesc = 'Method not supported.';
-            $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
-          }
+          // }
+          // else{
+          //   $strErrorDesc = 'Method not supported.';
+          //   $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+          // }
 
           //  send output
           if(!$strErrorDesc){
