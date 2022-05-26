@@ -11,6 +11,9 @@
 
     public function editUser($id, $firstname, $lastname, $username, $address, $phone, $email, $password, $image){
       // insert records to users table
+      if(strlen($image) < 50){
+        $image = "http://localhost:1000/php-api/assets/images/" . $image;
+      }
       return $this->update("UPDATE CUSTOMER SET FIRSTNAME = :firstname, LASTNAME = :lastname, USERNAME = :username, ADDRESS = :address, PHONE = :phone, EMAIL = :email, PASSWORD = :password, IMAGE = :image WHERE CUSTOMERID = :id", $id, $firstname, $lastname, $username, $address, $phone, $email, $password, $image);
       // $userId = $this->getToken($username, $password);
       // $this->createWishList("INSERT INTO WISHLIST VALUES (sq_wishlist.NEXTVAL, :id)", $userId['CUSTOMERID']);

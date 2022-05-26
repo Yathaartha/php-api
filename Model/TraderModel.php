@@ -9,21 +9,15 @@
 
     public function editTrader($id, $firstname, $lastname, $username, $address, $phone, $email, $salescategory, $password, $image, $status){
       // insert records to users table
+      if(strlen($image) < 50){
+        $image = "http://localhost:1000/php-api/assets/images/" . $image;
+      }
       return $this->updateTrader("UPDATE TRADER SET FIRSTNAME = :firstname, LASTNAME = :lastname, USERNAME = :username, ADDRESS = :address, PHONE = :phone, EMAIL = :email, SALESCATEGORY = :salescategory, PASSWORD = :password, IMAGE = :image, STATUS = :status WHERE TRADERID = :id", $firstname, $lastname, $username, $address, $phone, $email, $salescategory, $password, $image, $status, $id);
     }
 
     public function getToken($username, $password){
       // select customer with username and password as parameters
-      $response = $this->login("SELECT * FROM TRADER WHERE USERNAME = :username AND PASSWORD = :password", $username, $password);
-      if(count($response) > 0){
-        $_SESSION['logged_trader_id'] = $response[0]['TRADERID'];
-
-        $_SESSION['user_role'] = "Trader";
-        
-        return $response[0];
-      }else{
-        return "Username or password is incorrect";
-      }
+      return $this->login("SELECT * FROM TRADER WHERE USERNAME = :username AND PASSWORD = :password", $username, $password);
     }
     
     public function isTraderLoggedIn(){

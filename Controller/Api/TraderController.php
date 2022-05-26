@@ -12,7 +12,7 @@
           // if(strtoupper($requestMethod) == 'POST'){
             try{
               $userModel = new TraderModel();
-              $arrUser = $userModel->addTrader($arrFormParams['firstname'], $arrFormParams['lastname'], $arrFormParams['username'], $arrFormParams['address'], $arrFormParams['phone'], $arrFormParams['email'], $arrFormParams['category'], $arrFormParams['password']);
+              $arrUser = $userModel->addTrader($arrFormParams['firstname'], $arrFormParams['lastname'], $arrFormParams['username'], $arrFormParams['address'], $arrFormParams['phone'], $arrFormParams['email'], $arrFormParams['salescategory'], $arrFormParams['password']);
               $responseData = json_encode($arrUser);
             } catch(Error $e){
               $strErrorDesc = $e->getMessage().'Something went wrong! Please contact supper.';

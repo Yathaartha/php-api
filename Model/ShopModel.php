@@ -5,6 +5,10 @@
     public function getShops() {
       return $this->selectAll("SELECT * FROM SHOP");
     }
+    
+    public function getShopById($shopId) {
+      return $this->selectById("SELECT * FROM SHOP WHERE SHOPID = :id", $shopId);
+    }
 
     public function addShop($shopname, $shopdescription, $shopimage, $bannerimage, $trader) {
       $shopimage = "http://localhost:1000/php-api/assets/images/" . $shopimage;

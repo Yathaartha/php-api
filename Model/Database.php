@@ -86,9 +86,12 @@ class Database
         try {
             $stmt = oci_parse($this->connection, $query);
             $refcur = oci_new_cursor($this->connection);
-            oci_execute($stmt);
-            oci_fetch_all($stmt, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
-            return $result;
+            if(false === oci_execute($stmt)){
+                return oci_error($stmt);
+            }else{
+                oci_fetch_all($stmt, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
+                return $result;
+            }
         } catch (Exception $e) {
             throw new Exception($e->getMessage());  
         }
@@ -137,7 +140,11 @@ class Database
                 return $err;
             }else{
                 oci_fetch_all($stmt, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
-                return $result;
+                if(count($result) > 0){
+                    return $result;
+                }else{
+                    return false;
+                }
             }
         } catch (Exception $e) {
             throw new Exception($e->getMessage());  
@@ -405,7 +412,7 @@ class Database
             oci_bind_by_name($stmt, ':phone', $phone);
             oci_bind_by_name($stmt, ':email', $email);
             oci_bind_by_name($stmt, ':password', $password);
-            oci_bind_by_name($stmt, ':category', $category);
+            oci_bind_by_name($stmt, ':salescategory', $category);
 
             //Server settings
             $mail->SMTPDebug = SMTP::DEBUG_OFF;                      //Enable verbose debug output
@@ -429,9 +436,20 @@ class Database
             $mail->AltBody = 'We are excited to welcome you to the CHH E-Mart Trader Family. Below you will find your username and password to login to your account. Username: '.$username.' Password: '.$password.' Thank you for joining us! Be sure to follow the trader guidelines.';
             
             try{
-                oci_execute($stmt);
+                if(false === oci_execute($stmt)){
+                    return oci_error($stmt);
+                }else{
+                    $mail->send();
+                    
+                    $stmt1 = oci_parse($this->connection, 'SELECT * FROM CUSTOMER WHERE USERNAME = :username');
+                    $refcur = oci_new_cursor($this->connection);
+                    oci_bind_by_name($stmt1, ':username', $username);
+                    oci_execute($stmt1);
+                    oci_fetch_all($stmt1, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
+        
+                    return $result;
+                }
                 
-                $mail->send();
             }catch(Exception $e) {
                 echo $e;
             }
@@ -446,14 +464,6 @@ class Database
             //     'email' => $email,
             //     'password' => $password,
             // );
-
-            $stmt1 = oci_parse($this->connection, 'SELECT * FROM CUSTOMER WHERE USERNAME = :username');
-            $refcur = oci_new_cursor($this->connection);
-            oci_bind_by_name($stmt1, ':username', $username);
-            oci_execute($stmt1);
-            oci_fetch_all($stmt1, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
-
-            return $result;
         } catch (Exception $e) {
             throw new Exception($e->getMessage());   
         }
@@ -653,7 +663,6 @@ class Database
 
             try{
                 if(false == oci_execute($stmt)){
-                    echo $enddate;
                     $err = oci_error(($stmt));
                     return $err;
                 }else{
@@ -688,6 +697,45 @@ class Database
             oci_bind_by_name($stmt, ':shop', $shop);
             oci_bind_by_name($stmt, ':category', $category);
             oci_bind_by_name($stmt, ':offer', $offer);
+
+            try{
+                if(false == oci_execute($stmt)){
+                    $err = oci_error(($stmt));
+                    return $err;
+                }else{
+                    
+                    $stmt1 = oci_parse($this->connection, 'SELECT * FROM PRODUCT WHERE PRODUCTNAME = :name');
+                    $refcur = oci_new_cursor($this->connection);
+                    oci_bind_by_name($stmt1, ':name', $name);
+                    oci_execute($stmt1);
+                    oci_fetch_all($stmt1, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
+        
+                    return $result;
+                }
+                
+            }catch(Exception $e) {
+                echo $e;
+            }
+
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());   
+        }
+    }
+    // insert function
+    public function updateProduct($query, $name, $description, $price, $image, $stock, $shop, $category, $offer, $productId)
+    {
+        try {
+            $stmt = oci_parse($this->connection, $query);
+            oci_bind_by_name($stmt, ':name', $name);
+            oci_bind_by_name($stmt, ':description', $description);
+            oci_bind_by_name($stmt, ':price', $price);
+            oci_bind_by_name($stmt, ':image', $image);
+            oci_bind_by_name($stmt, ':stock', $stock);
+            oci_bind_by_name($stmt, ':shop', $shop);
+            oci_bind_by_name($stmt, ':category', $category);
+            oci_bind_by_name($stmt, ':offer', $offer);
+            oci_bind_by_name($stmt, ':id', $productId);
+
 
             try{
                 if(false == oci_execute($stmt)){

@@ -9,7 +9,7 @@
       $requestMethod = $_SERVER["REQUEST_METHOD"];
       $arrQueryStringParams = $_GET;
 
-      if(strtoupper($requestMethod) == 'GET'){
+      // if(strtoupper($requestMethod) == 'GET'){
         try{
           $productModel = new ProductModel();
 
@@ -17,8 +17,12 @@
 
           $intLimit = 10;
 
-          if(isset($arrQueryStringParams['limit']) && $arrQueryStringParams['limit']){
-            $intLimit = $arrQueryStringParams['limit'];
+          $intLimit = $arrQueryStringParams['limit'];
+
+          if(isset($arrQueryStringParams['offer'])){
+            $offer = $arrQueryStringParams['offer'];
+            $arrProduct = $productModel->getOfferProduct($intLimit);
+            $responseData = json_encode($arrProduct);
           }
           if(isset($arrQueryStringParams['highlight'] ) && $arrQueryStringParams['highlight']){
             $highlight = $arrQueryStringParams['highlight'];
@@ -38,10 +42,6 @@
           $strErrorDesc = $e->getMessage().'Something went wrong! Please contact supper.';
           $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
         }
-      }else{
-        $strErrorDesc = 'Method not supported.';
-        $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
-      }
 
       // send output
       if(!$strErrorDesc){
@@ -49,7 +49,33 @@
       }else{
         $this->sendOutput(json_encode(array('error' => $strErrorDesc)), array('Content-Type: application/json', $strErrorHeader));
       }
+    }
+    /**
+     * "/product/offer" Endpoint - Get list of products
+     */
+    public function offerAction(){
+      $strErrorDesc = '';
+      $requestMethod = $_SERVER["REQUEST_METHOD"];
+      $arrQueryStringParams = $_GET;
 
+      // if(strtoupper($requestMethod) == 'GET'){
+        try{
+          $productModel = new ProductModel();
+          
+          $arrProduct = $productModel->getOfferProduct();
+          $responseData = json_encode($arrProduct);
+
+        } catch(Error $e){
+          $strErrorDesc = $e->getMessage().'Something went wrong! Please contact supper.';
+          $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+        }
+
+      // send output
+      if(!$strErrorDesc){
+        $this->sendOutput($responseData, array('Content-Type: application/json', 'HTTP/1.1 200 OK'));
+      }else{
+        $this->sendOutput(json_encode(array('error' => $strErrorDesc)), array('Content-Type: application/json', $strErrorHeader));
+      }
     }
 
     /**
@@ -137,6 +163,39 @@
             try{
               $productModel = new ProductModel();
               $arrUser = $productModel->addProduct($arrFormParams['product_name'], $arrFormParams['product_price'], $arrFormParams['product_description'], $arrFormParams['product_image'], $arrFormParams['product_stock'], $arrFormParams['shop'], $arrFormParams['category'], $arrFormParams['offer']);
+              $responseData = json_encode($arrUser);
+            } catch(Error $e){
+              $strErrorDesc = $e->getMessage().'Something went wrong! Please contact supper.';
+              $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+            }
+          // }
+          // else{
+          //   $strErrorDesc = 'Method not supported.';
+          //   $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+          // }
+
+          //  send output
+          if(!$strErrorDesc){
+            $this->sendOutput($responseData, array('Content-Type: application/json', 'HTTP/1.1 200 OK'));
+          }else{
+            $this->sendOutput(json_encode(array('error' => $strErrorDesc)), array('Content-Type: application/json', $strErrorHeader));
+          }
+        }
+
+    /**
+        * "/product/edit" Endpoint - Create new product
+        */
+    
+        public function editAction(){
+          $strErrorDesc = '';
+          $requestMethod = $_SERVER["REQUEST_METHOD"];
+          // $arrQueryStringParams = $this->getQuerystringParams();
+          $arrFormParams = json_decode(file_get_contents('php://input'), true);
+
+          // if(strtoupper($requestMethod) == 'POST'){
+            try{
+              $productModel = new ProductModel();
+              $arrUser = $productModel->editProduct($arrFormParams['product_name'], $arrFormParams['product_price'], $arrFormParams['product_description'], $arrFormParams['product_image'], $arrFormParams['product_stock'], $arrFormParams['shop'], $arrFormParams['category'], $arrFormParams['offer'], $arrFormParams['productid']);
               $responseData = json_encode($arrUser);
             } catch(Error $e){
               $strErrorDesc = $e->getMessage().'Something went wrong! Please contact supper.';

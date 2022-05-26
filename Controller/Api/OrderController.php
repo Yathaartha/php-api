@@ -98,6 +98,12 @@
               $orderModel = new OrderModel();
               $arrUser = $orderModel->getCustomerOrder($customerId);
             }
+            
+            if(isset($arrQueryStringParams['shopid'])){
+              $shopId = $arrQueryStringParams['shopid'];
+              $orderModel = new OrderModel();
+              $arrUser = $orderModel->getTraderOrder($shopId);
+            }
 
             $responseData = json_encode($arrUser);
           } catch(Error $e){

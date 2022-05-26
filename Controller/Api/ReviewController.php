@@ -45,7 +45,7 @@
       $requestMethod = $_SERVER["REQUEST_METHOD"];
       $arrFormParams = json_decode(file_get_contents('php://input'), true);
 
-      if(strtoupper($requestMethod) == 'GET'){
+      // if(strtoupper($requestMethod) == 'GET'){
         try{
           $reviewModel = new ReviewModel();
 
@@ -55,10 +55,10 @@
           $strErrorDesc = $e->getMessage().'Something went wrong! Please contact supper.';
           $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
         }
-      }else{
-        $strErrorDesc = 'Method not supported.';
-        $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
-      }
+      // }else{
+      //   $strErrorDesc = 'Method not supported.';
+      //   $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+      // }
 
       // send output
       if(!$strErrorDesc){

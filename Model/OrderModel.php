@@ -18,6 +18,10 @@
       return $this->selectById("SELECT * FROM ORDERS WHERE CUSTOMER = :id", $id);
     }
 
+    public function getTraderOrder($id){
+      return $this->selectById("select o.orderno, productname, ci.quantity, o.orderdate, o.collectiondate, o.status, s.shopname from orders o, cartitems ci, product p, shop s where o.cart = ci.cart and ci.product = p.productid and p.shop = s.shopid and s.shopid = :id  ORDER BY o.orderdate", $id);
+    }
+
     public function addItemToCart($cartId, $productId, $quantity){
       return $this->addToCart("INSERT INTO CARTITEMS VALUES (:cart, :product, :quantity)", $cartId, $productId, $quantity);
     }
