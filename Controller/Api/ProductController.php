@@ -112,8 +112,8 @@
           if(isset($arrQueryStringParams['rating']) && $arrQueryStringParams['rating']){
             $rating = $arrQueryStringParams['rating'];
           }
-          if(isset($arrQueryStringParams['category']) && $arrQueryStringParams['category']){
-            $category = $arrQueryStringParams['category'];
+          if(isset($arrQueryStringParams['categories']) && $arrQueryStringParams['categories']){
+            $category = $arrQueryStringParams['categories'];
           }
           $arrProducts = $productModel->searchProducts($searchKey, $sort, $min, $max, $rating, $category);
           $responseData = json_encode($arrProducts);
