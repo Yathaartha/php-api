@@ -98,12 +98,16 @@ class Database
     }
 
     // function for select statement
-    public function search($query, $searchkey)
+    public function search($query, $searchkey, $min, $max, $rating, $category)
     {
         try {
             $stmt = oci_parse($this->connection, $query);
             $refcur = oci_new_cursor($this->connection);
             oci_bind_by_name($stmt, ":searchkey", $searchkey);
+            oci_bind_by_name($stmt, ":min", $min);
+            oci_bind_by_name($stmt, ":max", $max);
+            oci_bind_by_name($stmt, ":rating", $rating);
+            oci_bind_by_name($stmt, ":category", $category);
             oci_execute($stmt);
             oci_fetch_all($stmt, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
             return $result;
@@ -229,13 +233,18 @@ class Database
             if(false === oci_execute($stmt)) {
                 return oci_error($stmt);
             }else{
-                $result = array(
-                    'cart'=> $cart,
-                    'product'=> $product,
-                    'quantity' => $quantity
-                );
-    
-                return $result;
+                $stmt1 = oci_parse($this->connection, "UPDATE PRODUCT SET QUANTITY = QUANTITY - :quantity WHERE PRODUCTID = :product");
+                oci_bind_by_name($stmt1, ':quantity', $quantity);
+                oci_bind_by_name($stmt1, ':product', $product);
+                if(false === oci_execute($stmt)){
+                    return oci_error($stmt);
+                    $result = array(
+                        'cart'=> $cart,
+                        'product'=> $product,
+                        'quantity' => $quantity
+                    );
+                    return $result;
+                }
 
             }
             // oci_execute($stmt);
@@ -400,7 +409,7 @@ class Database
         }
     }
     // insert function
-    public function insertTrader($query, $firstname, $lastname, $username, $address, $phone, $email, $password, $category)
+    public function insertTrader($query, $firstname, $lastname, $username, $address, $phone, $email, $category, $password)
     {
         $mail = new PHPMailer();
         try {
@@ -588,6 +597,7 @@ class Database
             oci_execute($stmt2);
 
             oci_fetch_all($stmt1, $result, null, null, OCI_FETCHSTATEMENT_BY_ROW);
+
     
             return $result;
             }

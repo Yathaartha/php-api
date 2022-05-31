@@ -24,10 +24,100 @@
       }
     }
 
-    public function searchProducts($searchkey) {
+    public function searchProducts($searchkey, $sort, $min, $max, $rating, $category) {
       $searchkey = strtoupper($searchkey);
       $searchkey = "%".$searchkey."%";
-      return $this->search("SELECT * FROM product where upper(productname) like :searchkey", $searchkey); 
+      if($sort === ""){
+        if($min != "" && $max != ""){
+          if($rating != ""){
+            if($category != ""){
+              return $this->select("SELECT * FROM (SELECT * FROM product where UPPER(NAME) LIKE :searchkey and PRICE BETWEEN :min and :max and RATING >= :rating) WHERE rowNum BETWEEN 1 AND :limit", $searchkey, intval($min), intval($max), intval($rating), $category);
+            }else{
+              return $this->search("SELECT * FROM product where upper(productname) like :searchkey and price between :min and :max and rating >= :rating", $searchkey, $min, $max, $rating, $category);
+            }
+          }else{
+            if($category != ""){
+              return $this->select("SELECT * FROM (SELECT * FROM product where UPPER(NAME) LIKE :searchkey and PRICE BETWEEN :min and :max) WHERE rowNum BETWEEN 1 AND :limit", $searchkey, intval($min), intval($max), $category);
+            }else{
+              return $this->search("SELECT * FROM product where upper(productname) like :searchkey and price between :min and :max", $searchkey, $min, $max, $rating, $category);
+            }
+          }
+        }else{
+          if($rating != ""){
+            if($category != ""){
+              return $this->select("SELECT * FROM (SELECT * FROM product where UPPER(NAME) LIKE :searchkey and RATING >= :rating) WHERE rowNum BETWEEN 1 AND :limit", $searchkey, intval($min), intval($max), intval($rating), $category);
+            }else{
+              return $this->search("SELECT * FROM product where upper(productname) like :searchkey and rating >= :rating", $searchkey, $min, $max, $rating, $category);
+            }
+          }else{
+            if($category != ""){
+              return $this->select("SELECT * FROM (SELECT * FROM product where UPPER(NAME) LIKE :searchkey) WHERE rowNum BETWEEN 1 AND :limit", $searchkey, $category);
+            }else{
+              return $this->search("SELECT * FROM product where upper(productname) like :searchkey", $searchkey, $min, $max, $rating, $category);
+            }
+          }
+        }
+      }elseif($sort === "high"){
+        if($min != "" && $max != ""){
+          if($rating != ""){
+            if($category != ""){
+              return $this->select("SELECT * FROM (SELECT * FROM product where UPPER(NAME) LIKE :searchkey and PRICE BETWEEN :min and :max and RATING >= :rating) ORDER BY PRICE DESC", $searchkey, intval($min), intval($max), intval($rating), $category);
+            }else{
+              return $this->search("SELECT * FROM product where upper(productname) like :searchkey and price between :min and :max and rating >= :rating order by price desc", $searchkey, $min, $max, $rating, $category);
+            }
+          }else{
+            if($category != ""){
+              return $this->select("SELECT * FROM (SELECT * FROM product where UPPER(NAME) LIKE :searchkey and PRICE BETWEEN :min and :max) ORDER BY PRICE DESC", $searchkey, intval($min), intval($max), $category);
+            }else{
+              return $this->search("SELECT * FROM product where upper(productname) like :searchkey and price between :min and :max order by price desc", $searchkey, $min, $max, $rating, $category);
+            }
+          }
+        }else{
+          if($rating != ""){
+            if($category != ""){
+              return $this->select("SELECT * FROM (SELECT * FROM product where UPPER(NAME) LIKE :searchkey and RATING >= :rating) ORDER BY PRICE DESC", $searchkey, intval($min), intval($max), intval($rating), $category);
+            }else{
+              return $this->search("SELECT * FROM product where upper(productname) like :searchkey and rating >= :rating order by price desc", $searchkey, $min, $max, $rating, $category);
+            }
+          }else{
+            if($category != ""){
+              return $this->select("SELECT * FROM (SELECT * FROM product where UPPER(NAME) LIKE :searchkey) ORDER BY PRICE DESC", $searchkey, $category);
+            }else{
+              return $this->search("SELECT * FROM product where upper(productname) like :searchkey order by price desc", $searchkey, $min, $max, $rating, $category);
+            }
+          }
+        }
+      }elseif($sort === "low"){
+        if($min != "" && $max != ""){
+          if($rating != ""){
+            if($category != ""){
+              return $this->select("SELECT * FROM (SELECT * FROM product where UPPER(NAME) LIKE :searchkey and PRICE BETWEEN :min and :max and RATING >= :rating) ORDER BY PRICE ASC", $searchkey, intval($min), intval($max), intval($rating), $category);
+            }else{
+              return $this->search("SELECT * FROM product where upper(productname) like :searchkey and price between :min and :max and rating >= :rating order by price asc", $searchkey, $min, $max, $rating, $category);
+            }
+          }else{
+            if($category != ""){
+              return $this->select("SELECT * FROM (SELECT * FROM product where UPPER(NAME) LIKE :searchkey and PRICE BETWEEN :min and :max) ORDER BY PRICE ASC", $searchkey, intval($min), intval($max), $category);
+            }else{
+              return $this->search("SELECT * FROM product where upper(productname) like :searchkey and price between :min and :max order by price asc", $searchkey, $min, $max, $rating, $category);
+            }
+          }
+        }else{
+          if($rating != ""){
+            if($category != ""){
+              return $this->select("SELECT * FROM (SELECT * FROM product where UPPER(NAME) LIKE :searchkey and RATING >= :rating) ORDER BY PRICE ASC", $searchkey, intval($min), intval($max), intval($rating), $category);
+            }else{
+              return $this->search("SELECT * FROM product where upper(productname) like :searchkey and rating >= :rating order by price asc", $searchkey, $min, $max, $rating, $category);
+            }
+          }else{
+            if($category != ""){
+              return $this->select("SELECT * FROM (SELECT * FROM product where UPPER(NAME) LIKE :searchkey) ORDER BY PRICE ASC", $searchkey, $category);
+            }else{
+              return $this->search("SELECT * FROM product where upper(productname) like :searchkey order by price asc", $searchkey, $min, $max, $rating, $category);
+            }
+          }
+        }
+      }
     }
 
     public function addProduct($name, $price, $description, $image, $stock, $shop, $category, $offer){

@@ -91,11 +91,31 @@
           $productModel = new ProductModel();
 
           $searchKey = "";
+          $sort = "";
+          $min = "";
+          $max = "";
+          $rating = "";
+          $category = "";
 
           if(isset($arrQueryStringParams['value']) && $arrQueryStringParams['value']){
             $searchKey = $arrQueryStringParams['value'];
           }
-          $arrProducts = $productModel->searchProducts($searchKey);
+          if(isset($arrQueryStringParams['sort']) && $arrQueryStringParams['sort']){
+            $sort = $arrQueryStringParams['sort'];
+          }
+          if(isset($arrQueryStringParams['min']) && $arrQueryStringParams['min']){
+            $min = $arrQueryStringParams['min'];
+          }
+          if(isset($arrQueryStringParams['max']) && $arrQueryStringParams['max']){
+            $max = $arrQueryStringParams['max'];
+          }
+          if(isset($arrQueryStringParams['rating']) && $arrQueryStringParams['rating']){
+            $rating = $arrQueryStringParams['rating'];
+          }
+          if(isset($arrQueryStringParams['category']) && $arrQueryStringParams['category']){
+            $category = $arrQueryStringParams['category'];
+          }
+          $arrProducts = $productModel->searchProducts($searchKey, $sort, $min, $max, $rating, $category);
           $responseData = json_encode($arrProducts);
         } catch(Error $e){
           $strErrorDesc = $e->getMessage().'Something went wrong! Please contact supper.';
